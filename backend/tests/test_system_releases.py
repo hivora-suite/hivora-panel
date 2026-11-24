@@ -20,6 +20,8 @@ from hivora.main import create_app
 from hivora.runtime import Runtime
 from hivora.system.releases import (
     changelog_section,
+    changelog_since,
+    final_of,
     newer,
     parse_version,
     pick_latest,
@@ -219,7 +221,8 @@ def test_the_installed_versions_notes_and_admins_only(tmp_path: Path) -> None:
                 assert other.get(f"{API}/system/whats-new").json() == news  # theirs too
         # Seen an older version: its notes and every one after it (here at least the current).
         since = c.get(f"{API}/system/whats-new", params={"since": "0.0.1"}).json()["notes"]
-        assert since.startswith(f"## {__version__}\n\n") and "## 0.3.5" in since
+        # A candidate's notes are its final version's section (docs/releasing.md).
+        assert since.startswith(f"## {final_of(__version__)}\n\n") and "## 0.3.5" in since
         assert c.get(f"{API}/system/whats-new", params={"since": "garbage"}).json() == news
 
 
@@ -273,3 +276,15 @@ def test_the_notes_of_every_version_since_the_one_seen() -> None:
     assert changelog_since(text, "0.3.5", "0.3.7") == "## 0.3.7\n\n- seven\n\n## 0.3.6\n\n- six"
     assert changelog_since(text, "0.3.6", "0.4.0") == "## 0.4.0\n\n- four\n\n## 0.3.7\n\n- seven"
     assert changelog_since(text, "0.4.0", "0.4.0") is None
+
+
+def test_a_candidate_reads_its_final_versions_notes() -> None:
+    # docs/releasing.md: a candidate's lines sit under "## [X.Y.Z]" (no date) until the final.
+    text = "## [Non publié]\n\n## [0.6.0]\n\n- New.\n\n## [0.5.3] - 2026-11-09\n\n- Old.\n"
+    assert final_of("0.6.0-rc.1") == "0.6.0" and final_of("0.6.0") == "0.6.0"
+    assert changelog_section(text, "0.6.0-rc.1") == "- New."
+    assert changelog_section(text, "0.6.0-rc.1") == changelog_section(text, "0.6.0")
+    assert changelog_section(text, "0.7.0-rc.1") is None
+    # Updated from 0.5.3 to the candidate: the candidate's notes, the older ones left out.
+    assert changelog_since(text, "0.5.3", "0.6.0-rc.1") == "## 0.6.0\n\n- New."
+    assert changelog_since(text, "0.6.0-rc.1", "0.6.0-rc.2") == "## 0.6.0\n\n- New."

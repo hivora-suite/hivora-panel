@@ -69,10 +69,20 @@ def plain_notes(body: str | None) -> str:
     return text.strip()[:NOTES_MAX]
 
 
+def final_of(version: str) -> str:
+    """A release candidate's final version (0.6.0-rc.1 -> 0.6.0); any other: itself."""
+    return re.sub(r"-rc\.\d+$", "", version)
+
+
 def changelog_section(text: str, version: str) -> str | None:
-    """The ``## [X.Y.Z]`` section of CHANGELOG.md (Keep a Changelog), without its title."""
-    m = re.search(rf"^## \[{re.escape(version)}\][^\n]*\n(.*?)(?=^## \[|\Z)", text, re.M | re.S)
-    return m.group(1).strip() if m and m.group(1).strip() else None
+    """The ``## [X.Y.Z]`` section of CHANGELOG.md (Keep a Changelog), without its title. A
+    candidate without a section of its own has its final version's (docs/releasing.md, as
+    release-check.sh does)."""
+    for v in dict.fromkeys((version, final_of(version))):
+        m = re.search(rf"^## \[{re.escape(v)}\][^\n]*\n(.*?)(?=^## \[|\Z)", text, re.M | re.S)
+        if m and m.group(1).strip():
+            return m.group(1).strip()
+    return None
 
 
 def changelog_since(text: str, since: str, current: str) -> str | None:
@@ -80,7 +90,7 @@ def changelog_since(text: str, since: str, current: str) -> str | None:
     a ``## X.Y.Z`` title (what a panel updated over several versions brings)."""
     parts = [f"## {v}\n\n{notes}"
              for v in re.findall(r"^## \[(\d[^\]]*)\]", text, re.M)
-             if newer(since, v) and not newer(current, v)
+             if newer(since, v) and not newer(final_of(current), v)
              and (notes := changelog_section(text, v))]  # fmt: skip
     return "\n\n".join(parts) or None
 

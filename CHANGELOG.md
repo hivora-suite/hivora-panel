@@ -25,6 +25,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ### Corrigé
 
+- Une version candidate (`-rc.N`) affiche ses notes et la fenêtre « Nouveautés » (celles de sa version finale).
 - Les fenêtres de suivi des tâches ne disparaissent plus après quelques actions rapides : le résumé groupé n'apparaît que pour trois tâches lancées en même temps.
 
 ## [0.5.3] - 2026-11-09
