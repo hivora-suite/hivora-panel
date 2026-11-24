@@ -6,6 +6,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ## [Non publié]
 
+## [0.6.0]
+
 ### Ajouté
 
 - **Module Cybersécurité** (désactivé par défaut ; question de l'installeur ou `--labs`) : des cibles volontairement vulnérables pour les cours de sécurité, rangées par phase de la kill chain, dans une zone « Labo » à part (hors topologie, jamais reliée aux autres apps). Au catalogue : DVWA, Juice Shop, WebGoat et 215 environnements vulhub. Déploiement de plusieurs copies d'un coup (IP et ports attribués), tableau de bord labo (éteindre, redémarrer, supprimer en lot), guide de solution dans un lecteur imprimable.
