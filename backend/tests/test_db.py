@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 import hivora.db.all_models  # noqa: F401
 from hivora.db.base import Base
 from hivora.db.engine import make_engine, make_sessionmaker, make_sync_engine
-from hivora.db.migrate import alembic_config, upgrade_to_head
+from hivora.db.migrate import alembic_config, known_revisions, upgrade_to_head
 from hivora.db.models import Setting
 
 
@@ -374,3 +374,33 @@ def test_migration_0021_zone_start_order(tmp_path: Path) -> None:
     with engine.begin() as conn:
         depend(conn, (3, 1))
     engine.dispose()
+
+
+def test_revisions_read_from_file_names_match_alembic() -> None:
+    # The startup reads the head from the files' names (no Alembic import): one straight
+    # line, each file holding the revision of its prefix, in Alembic's own order.
+    from alembic.script import ScriptDirectory
+
+    script = ScriptDirectory.from_config(alembic_config(Path("unused.db")))
+    walked = [r.revision for r in script.walk_revisions()][::-1]  # oldest first
+    assert walked == known_revisions() and script.get_current_head() == known_revisions()[-1]
+
+
+def test_a_current_database_starts_without_importing_alembic(tmp_path: Path) -> None:
+    import subprocess
+    import sys
+
+    code = (
+        "import sys; from pathlib import Path; from hivora.core.config import Settings; "
+        "from hivora.runtime import prepare_database; "
+        f"prepare_database(Settings(data_dir=Path({str(tmp_path)!r}))); "
+        "print('alembic' in sys.modules)"
+    )
+
+    def run() -> str:
+        out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)  # noqa: S603
+        assert out.returncode == 0, out.stderr
+        return out.stdout.split()[-1]
+
+    assert run() == "True"  # fresh: migrated with Alembic
+    assert run() == "False"  # current: Alembic never imported

@@ -1,15 +1,28 @@
-"""Programmatic Alembic entrypoint: the app upgrades its own schema on startup."""
+"""Programmatic Alembic entrypoint: the app upgrades its own schema on startup.
+
+Alembic (about 11 MB once imported, kept for the process's life) is only imported when a
+migration has to run: whether the database is current is read from the migration files'
+names (``0028_….py`` holds revision ``0028``, a straight line; ``test_db`` checks it against
+Alembic's own graph).
+"""
 
 import sqlite3
 from contextlib import closing
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
-from alembic import command
-from alembic.config import Config
-from alembic.script import ScriptDirectory
+if TYPE_CHECKING:
+    from alembic.config import Config
 
 MIGRATIONS_DIR = Path(__file__).parent / "migrations"
+
+
+def known_revisions() -> list[str]:
+    """This code's schema revisions, oldest first (the last one is the head)."""
+    return sorted(
+        p.name.split("_", 1)[0] for p in (MIGRATIONS_DIR / "versions").glob("[0-9]*_*.py")
+    )
+
 
 SchemaState = Literal["fresh", "current", "behind", "newer"]
 
@@ -27,7 +40,9 @@ class SchemaTooNewError(RuntimeError):
         self.revision = revision
 
 
-def alembic_config(db_path: Path) -> Config:
+def alembic_config(db_path: Path) -> "Config":
+    from alembic.config import Config
+
     cfg = Config()
     cfg.set_main_option("script_location", str(MIGRATIONS_DIR))
     cfg.attributes["db_path"] = db_path
@@ -35,6 +50,8 @@ def alembic_config(db_path: Path) -> Config:
 
 
 def upgrade_to_head(db_path: Path) -> None:
+    from alembic import command
+
     command.upgrade(alembic_config(db_path), "head")
 
 
@@ -56,8 +73,7 @@ def schema_state(db_path: Path) -> SchemaState:
     revision = db_revision(db_path)
     if revision is None:
         return "fresh"
-    script = ScriptDirectory.from_config(alembic_config(db_path))
-    if revision == script.get_current_head():
+    known = known_revisions()
+    if revision == known[-1]:
         return "current"
-    known = {r.revision for r in script.walk_revisions()}
     return "behind" if revision in known else "newer"

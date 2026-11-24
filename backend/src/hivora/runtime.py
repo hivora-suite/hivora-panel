@@ -67,7 +67,8 @@ def prepare_database(settings: Settings) -> None:
         raise SchemaTooNewError(db_revision(settings.db_path) or "?")
     if schema == "behind":  # a migration is about to run: keep a way back
         logger.warning("panel backed up before migrating: %s", backup_panel(settings.data_dir))
-    upgrade_to_head(settings.db_path)
+    if schema != "current":  # Alembic is imported only to migrate (fresh or behind)
+        upgrade_to_head(settings.db_path)
 
 
 @dataclass
