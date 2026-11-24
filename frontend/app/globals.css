@@ -27,6 +27,7 @@
   --nav-apps: oklch(0.52 0.13 65);
   --nav-network: oklch(0.5 0.11 210);
   --nav-admin: oklch(0.5 0.13 300);
+  --nav-labs: oklch(0.52 0.2 25);
   --grid: oklch(0.6 0.04 70 / 0.2);
   --field: oklch(0.945 0.01 80);
   /* Depth: warm shadows and a light edge on raised surfaces. */
@@ -48,13 +49,13 @@
 }
 
 .dark {
-  --background: oklch(0.17 0.01 60);
+  --background: oklch(0.21 0.01 60);
   --foreground: oklch(0.94 0.01 85);
-  --card: oklch(0.21 0.012 60);
-  --muted: oklch(0.25 0.012 60);
+  --card: oklch(0.25 0.012 60);
+  --muted: oklch(0.29 0.012 60);
   --muted-foreground: oklch(0.7 0.015 70);
-  --border: oklch(0.3 0.012 60);
-  --input: oklch(0.34 0.012 60);
+  --border: oklch(0.34 0.012 60);
+  --input: oklch(0.38 0.012 60);
   --primary: oklch(0.78 0.15 75);
   --primary-foreground: oklch(0.18 0.02 60);
   --ok: oklch(0.72 0.15 150);
@@ -63,14 +64,15 @@
   --nav-apps: oklch(0.78 0.14 75);
   --nav-network: oklch(0.76 0.11 210);
   --nav-admin: oklch(0.76 0.12 300);
+  --nav-labs: oklch(0.74 0.17 25);
   --grid: oklch(0.78 0.05 75 / 0.14);
   --warn: oklch(0.72 0.15 70);
   --danger: oklch(0.58 0.2 27);
   --shadow-color: oklch(0 0 0 / 0.35);
   --shadow-strong: oklch(0 0 0 / 0.55);
   --highlight: oklch(1 0 0 / 0.06);
-  --sidebar: oklch(0.19 0.011 60);
-  --field: oklch(0.19 0.01 60);
+  --sidebar: oklch(0.23 0.011 60);
+  --field: oklch(0.23 0.01 60);
   --chart-1: #c98212;
   --chart-2: #1a89c5;
   --code-keyword: oklch(0.76 0.13 305);
@@ -213,12 +215,12 @@ label:has(> span > input:not(:disabled)) {
 @keyframes hv-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes hv-fade-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes hv-pop-in {
-  from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; transform: translateY(2%) scale(0.96); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes hv-pop-out {
-  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  to { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(2%) scale(0.96); }
 }
 @keyframes hv-menu-in {
   from { opacity: 0; transform: translateY(-4px) scale(0.98); }
@@ -437,3 +439,20 @@ label:has(> span > input:not(:disabled)) {
 @keyframes hv-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .entering { animation: hv-fade-in 200ms var(--ease-out) both; }
 .entering-bar { transform-origin: left; animation: hv-fill 850ms var(--ease-out) both; }
+
+/* Security-lab dashboard: the activity "bug". It shakes and reddens when a target takes
+   inbound traffic (someone is hitting it) — an activity cue, not an intrusion detector. */
+@keyframes bug-shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-1.5px) rotate(-8deg); }
+  40% { transform: translateX(1.5px) rotate(7deg); }
+  60% { transform: translateX(-1px) rotate(-5deg); }
+  80% { transform: translateX(1px) rotate(5deg); }
+}
+.bug-attack { animation: bug-shake 0.35s ease-in-out infinite; }
+
+/* Printing (a lab's solution as a PDF): no animated grid behind, A4 margins. */
+@media print {
+  canvas { display: none !important; }
+  @page { size: A4; margin: 15mm; }
+}

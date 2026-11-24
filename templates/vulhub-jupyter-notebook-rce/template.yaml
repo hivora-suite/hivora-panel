@@ -1,0 +1,78 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-jupyter-notebook-rce
+  name: Jupyter Notebook Unauthorized Access
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - jupyter
+  description: Jupyter — Jupyter Notebook Unauthorized Access (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/jupyter/notebook-rce
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/jupyter/notebook-rce
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - auth-bypass
+    - jupyter
+    difficulty: medium
+    summary: Jupyter Notebook Unauthorized Access
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/jupyter/notebook-rce
+        The Jupyter Notebook (previous IPython notebook) is a web-based interactive computing platform.
+        If the administrator doesn't configure a password for Jupyter Notebook, this will lead to an unauthorized access vulnerability where attackers can create a console and execute arbitrary Python code and commands.
+        # Vulnerable environment
+        Execute following command to start a Jupyter Notebook server:
+        $ docker compose up -d
+        After the server is started, you can see the index of Jupyter Notebook on `http://your-ip:8888`.
+        # Vulnerability Reproduce
+        Click "New" -> "Terminal" to create a console:
+        Execute arbitrary commands in this console:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/jupyter/notebook-rce
+        The Jupyter Notebook (previous IPython notebook) is a web-based interactive computing platform.
+        If the administrator doesn't configure a password for Jupyter Notebook, this will lead to an unauthorized access vulnerability where attackers can create a console and execute arbitrary Python code and commands.
+        # Vulnerable environment
+        Execute following command to start a Jupyter Notebook server:
+        $ docker compose up -d
+        After the server is started, you can see the index of Jupyter Notebook on `http://your-ip:8888`.
+        # Vulnerability Reproduce
+        Click "New" -> "Terminal" to create a console:
+        Execute arbitrary commands in this console:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_8888
+    group:
+      fr: Accès
+      en: Access
+    label: web 8888/tcp
+    type: port
+    default: 8888
+services:
+  web:
+    role: main
+    image: vulhub/jupyter-notebook
+    tag: 5.2.2@sha256:07a52b5106cd627390f4b999658ed35fae65ec14d27e93e98c2a227b4239cc2c
+    frozen: true
+    command: start-notebook.sh --NotebookApp.token=''
+    ports:
+    - container: 8888
+      host: '{{ form.port_8888 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_8888 }}

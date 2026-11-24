@@ -1,0 +1,79 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-thinkphp-2-rce
+  name: ThinkPHP 2.x Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - thinkphp
+  description: ThinkPHP — ThinkPHP 2.x Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/thinkphp/2-rce
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/thinkphp/2-rce
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - rce
+    - thinkphp
+    difficulty: medium
+    summary: ThinkPHP 2.x Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/thinkphp/2-rce
+        ThinkPHP is a popular PHP framework widely used in China. ThinkPHP versions 2.x contain a remote code execution that caused by the `preg_replace`.
+        In ThinkPHP 2.x, the framework uses `preg_replace` with `/e` modifier to match routes:
+        $ $res = preg_replace('@(\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
+        This implementation causes user input parameters to be executed within double quotes, leading to arbitrary code execution. The vulnerability also exists in ThinkPHP 3.0 when running in Lite mode, as this issue wasn't patched in that specific mode.
+        # Environment Setup
+        Execute the following command to start a ThinkPHP 2.1 demo application:
+        $ docker compose up -d
+        After the server is started, you can visit `http://your-ip:8080/Index/Index` to see the default page.
+        # Vulnerability Reproduction
+        To exploit this vulnerability, we can inject PHP code through the URL parameters. By visiting `http://your-ip:8080/index.php?s=/index/index/name/${@phpinfo()}`, the `phpinfo()` function will be executed on the target server, demonstrating the successful exploitation of the remote code execution vulnerability:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/thinkphp/2-rce
+        ThinkPHP is a popular PHP framework widely used in China. ThinkPHP versions 2.x contain a remote code execution that caused by the `preg_replace`.
+        In ThinkPHP 2.x, the framework uses `preg_replace` with `/e` modifier to match routes:
+        $ $res = preg_replace('@(\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
+        This implementation causes user input parameters to be executed within double quotes, leading to arbitrary code execution. The vulnerability also exists in ThinkPHP 3.0 when running in Lite mode, as this issue wasn't patched in that specific mode.
+        # Environment Setup
+        Execute the following command to start a ThinkPHP 2.1 demo application:
+        $ docker compose up -d
+        After the server is started, you can visit `http://your-ip:8080/Index/Index` to see the default page.
+        # Vulnerability Reproduction
+        To exploit this vulnerability, we can inject PHP code through the URL parameters. By visiting `http://your-ip:8080/index.php?s=/index/index/name/${@phpinfo()}`, the `phpinfo()` function will be executed on the target server, demonstrating the successful exploitation of the remote code execution vulnerability:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_80
+    group:
+      fr: Accès
+      en: Access
+    label: web 80/tcp
+    type: port
+    default: 8080
+services:
+  web:
+    role: main
+    image: vulhub/thinkphp
+    tag: 2.1@sha256:c06b47441805049e6b040c76d6556abc7b2eed6ff7a7931d10d61898a0ebeea0
+    frozen: true
+    ports:
+    - container: 80
+      host: '{{ form.port_80 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_80 }}

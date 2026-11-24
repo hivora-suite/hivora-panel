@@ -65,11 +65,34 @@ class IconSource(_Strict):
         return self.url
 
 
+KillChainPhase = Literal[
+    "recon", "weaponization", "delivery", "exploitation", "installation", "c2", "actions",
+]  # fmt: skip
+LabOS = Literal["linux", "windows"]
+CVE = re.compile(r"^CVE-\d{4}-\d{4,}$")
+
+
+class LabInfo(_Strict):
+    """A deliberately vulnerable teaching target (category ``security-lab``). Static,
+    declarative: where it sits on the kill chain, what it runs, and how to solve it."""
+
+    phase: KillChainPhase
+    cves: Annotated[list[Annotated[str, Field(pattern=CVE.pattern)]], Field(default=[])]
+    os: list[LabOS] = []
+    tech: list[str] = []  # free tags for filtering: web, cms, database, network, auth…
+    difficulty: Literal["easy", "medium", "hard"] = "medium"
+    summary: Localized = ""
+    solution: Localized = ""  # the teacher's walkthrough; hidden by default in the UI
+    needs_vpn: bool = False  # scanned over the network (nmap…): deployed only behind the labs VPN
+
+
 class Metadata(_Strict):
     slug: Annotated[str, Field(pattern=SLUG)]
     name: str
     version: Annotated[str, Field(pattern=SEMVER)]
-    category: Literal["games", "media", "productivity", "services", "network", "development"]
+    category: Literal[
+        "games", "media", "productivity", "services", "network", "development", "security-lab",
+    ]  # fmt: skip
     tags: list[str] = []
     icon: IconSource | None = None
     description: Localized = ""
@@ -78,6 +101,15 @@ class Metadata(_Strict):
     verified: bool = False  # adapted and tested for Hivora: badge in the catalog
     license: str | None = None
     source: str | None = None
+    lab: LabInfo | None = None  # only on "security-lab" templates (checked below)
+
+    @model_validator(mode="after")
+    def _lab_matches_category(self) -> "Metadata":
+        if (self.category == "security-lab") != (self.lab is not None):
+            raise ValueError(
+                "a 'security-lab' template needs a 'lab' block, and only it may have one"
+            )
+        return self
 
 
 class ResourceReq(_Strict):

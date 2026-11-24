@@ -19,6 +19,8 @@ import { cn } from "@/lib/utils";
 
 type Kind = "games" | "apps";
 const isGame = (category: string) => category === "games";
+// Security labs live only in the Cybersecurity space, never in the normal catalog.
+const isLab = (category: string) => category === "security-lab";
 
 /** Landing: two big doors, each showing real icons from its side of the catalog. */
 function CatalogHome() {
@@ -31,7 +33,7 @@ function CatalogHome() {
   return (
     <div className="stagger grid gap-5 md:grid-cols-2">
       {doors.map(({ kind, icon: Icon }) => {
-        const items = (templates ?? []).filter((tp) => isGame(tp.category) === (kind === "games"));
+        const items = (templates ?? []).filter((tp) => !isLab(tp.category) && isGame(tp.category) === (kind === "games"));
         return (
           <Link
             key={kind}
@@ -66,7 +68,7 @@ function AppsCatalog({ kind }: { kind: Kind }) {
   const [category, setCategory] = useState("all");
 
   const ofKind = useMemo(
-    () => (templates ?? []).filter((tp) => isGame(tp.category) === (kind === "games")),
+    () => (templates ?? []).filter((tp) => !isLab(tp.category) && isGame(tp.category) === (kind === "games")),
     [templates, kind],
   );
   const categories = useMemo(() => ["all", ...new Set(ofKind.map((tp) => tp.category))], [ofKind]);

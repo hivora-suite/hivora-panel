@@ -60,13 +60,34 @@ async def list_zones(session: AsyncSession) -> list[Zone]:
     return list(await session.scalars(select(Zone).order_by(Zone.sort_order, Zone.name)))
 
 
+# The security labs live apart from normal apps, in their own system zone (never shown in the
+# topology; see topology.service). Created on demand the first time a lab is deployed. The slug
+# is reserved (create_zone never hands it to a user zone), so matching on it is safe.
+LABS_ZONE = "security-labs"
+
+
+async def ensure_labs_zone(session: AsyncSession, clock: Clock) -> Zone:
+    """The system zone that holds every security-lab target, created if missing. SHARED so the
+    labs share a network a WireGuard VPN can reach (vpn module); its subnet is assigned by the
+    addressing plan like any other zone (no hand-picked range)."""
+    zone = await find_zone(session, LABS_ZONE)
+    if zone is None:
+        order = (await session.scalar(select(func.max(Zone.sort_order)))) or 0
+        zone = Zone(slug=LABS_ZONE, name="Labo", color="#d4453b", icon="flask",
+                    description="", network_mode=NetworkMode.SHARED, sort_order=order + 1,
+                    is_system=True, created_at=clock.now())  # fmt: skip
+        session.add(zone)
+        await session.flush()
+    return zone
+
+
 async def create_zone(
     session: AsyncSession, clock: Clock, name: str, color: str, mode: NetworkMode
 ) -> Zone:
     _check(name, color, mode)
     base = slug = _slug(name)
     n = 2
-    while await session.scalar(select(Zone.id).where(Zone.slug == slug)):
+    while slug == LABS_ZONE or await session.scalar(select(Zone.id).where(Zone.slug == slug)):
         slug, n = f"{base}-{n}", n + 1
     order = (await session.scalar(select(func.max(Zone.sort_order)))) or 0
     zone = Zone(slug=slug, name=name.strip(), color=color, icon=None, description="",

@@ -30,12 +30,24 @@ class ConflictOut(BaseModel):
     suggestion: int | None
 
 
+def plan_ips(plan: "DeployPlan") -> list[str]:
+    """The fixed container IPs the plan assigns (addressing), across every service/network."""
+    ips: list[str] = []
+    for svc in (plan.compiled.compose.get("services") or {}).values():
+        for net in (svc.get("networks") or {}).values():
+            ip = isinstance(net, dict) and net.get("ipv4_address")
+            if ip and ip not in ips:
+                ips.append(ip)
+    return ips
+
+
 class PlanOut(BaseModel):
     slug: str
     name: str
     zone: str | None
     compose_yaml: str
     ports: list[PortOut]
+    ips: list[str] = []  # the fixed container IPs the addressing plan assigns
     volumes: list[str]
     conflicts: list[ConflictOut]
     access: dict[str, str]
@@ -115,7 +127,7 @@ def plan_out(plan: DeployPlan) -> PlanOut:
              for s in plan.compiled.services for p in s.ports]  # fmt: skip
     return PlanOut(
         slug=plan.slug, name=plan.name, zone=plan.zone.slug if plan.zone else None,
-        compose_yaml=plan.compiled.compose_yaml, ports=ports,
+        compose_yaml=plan.compiled.compose_yaml, ports=ports, ips=plan_ips(plan),
         volumes=[str(v.source) for s in plan.compiled.services for v in s.volumes],
         conflicts=[ConflictOut(port=c.port, protocol=c.protocol, used_by=c.used_by,
                                suggestion=c.suggestion) for c in plan.conflicts],

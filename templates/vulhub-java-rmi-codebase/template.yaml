@@ -1,0 +1,95 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-java-rmi-codebase
+  name: Java RMI codebase Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - java-rmi
+  description: Java RMI — Java RMI codebase Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/java/rmi-codebase
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/java/rmi-codebase
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - java-rmi
+    - rce
+    difficulty: medium
+    summary: Java RMI codebase Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/java/rmi-codebase
+        Java Remote Method Invocation (RMI) is used for remote procedure calls in Java. Under certain conditions, an RMI client can specify `java.rmi.server.codebase` to make the server load remote objects, leading to the execution of arbitrary Java bytecode on the server.
+        References:
+        - <https://docs.oracle.com/javase/7/docs/technotes/guides/rmi/codebase.html>
+        - <https://paper.seebug.org/1091/>
+        # Environment Setup
+        Execute the following commands to compile and start the RMI Registry and server:
+        $ docker compose build
+        $ docker compose run -e RMIIP=your-ip -p 1099:1099 -p 64000:64000 rmi
+        Replace `your-ip` with your server's IP address. The client will use this IP to connect to the server.
+        After startup, the RMI Registry will be listening on port 1099.
+        # Vulnerability Reproduction
+        To be completed.
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/java/rmi-codebase
+        Java Remote Method Invocation (RMI) is used for remote procedure calls in Java. Under certain conditions, an RMI client can specify `java.rmi.server.codebase` to make the server load remote objects, leading to the execution of arbitrary Java bytecode on the server.
+        References:
+        - <https://docs.oracle.com/javase/7/docs/technotes/guides/rmi/codebase.html>
+        - <https://paper.seebug.org/1091/>
+        # Environment Setup
+        Execute the following commands to compile and start the RMI Registry and server:
+        $ docker compose build
+        $ docker compose run -e RMIIP=your-ip -p 1099:1099 -p 64000:64000 rmi
+        Replace `your-ip` with your server's IP address. The client will use this IP to connect to the server.
+        After startup, the RMI Registry will be listening on port 1099.
+        # Vulnerability Reproduction
+        To be completed.
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_1099
+    group:
+      fr: Accès
+      en: Access
+    label: rmi 1099/tcp
+    type: port
+    default: 1099
+  - id: port_64000
+    group:
+      fr: Accès
+      en: Access
+    label: rmi 64000/tcp
+    type: port
+    default: 64000
+services:
+  rmi:
+    role: main
+    image: vulhub/j2ee
+    tag: 8u222@sha256:0e6fd0c891105b6b945d8006cc4e31ce3bb00fc733513ba41b1f5e764bd98a4a
+    frozen: true
+    env:
+      RMIIP: 127.0.0.1
+    ports:
+    - container: 1099
+      host: '{{ form.port_1099 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+    - container: 64000
+      host: '{{ form.port_64000 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+update:
+  strategy: manual

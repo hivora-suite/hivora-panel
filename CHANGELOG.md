@@ -8,6 +8,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ### Modifié
 
+- Les fenêtres du panel s'ouvrent directement au centre de l'écran, sans glisser depuis le coin.
 - **Nouvel emplacement** : le dépôt est maintenant `hivora-suite/hivora-panel`, l'image `ghcr.io/hivora-suite/hivora-panel`. Depuis une version 0.5.3 ou antérieure, relancez une fois l'installeur : il passe seul à la nouvelle image ; le bouton « Mettre à jour » de ces versions ne la trouve pas.
 
 ## [0.5.3] - 2026-11-09

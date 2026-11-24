@@ -31,6 +31,7 @@ class SystemInfo(BaseModel):
     arch: str
     python: str
     games: bool  # off: the installer's --no-games (the catalog shows no game)
+    labs: bool  # on: the installer's --labs (the Cybersecurity space and its vulnerable targets)
 
 
 @router.get("/health")
@@ -52,6 +53,7 @@ async def info(_: Viewer, rt: RuntimeDep) -> SystemInfo:
         arch=rt.catalog.host_arch(),
         python=platform.python_version(),
         games=rt.settings.games,
+        labs=rt.settings.labs,
     )
 
 

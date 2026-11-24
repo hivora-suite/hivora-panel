@@ -40,6 +40,14 @@ class GamesDisabledError(PermissionDeniedError):
     code = "games_disabled"
 
 
+class LabsDisabledError(PermissionDeniedError):
+    code = "labs_disabled"
+
+
+class LabsVpnRequiredError(ConflictError):
+    code = "labs_vpn_required"
+
+
 @dataclass(frozen=True, slots=True)
 class DeployRequest:
     template: str

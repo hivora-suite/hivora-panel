@@ -53,6 +53,9 @@ async def resolve(session: AsyncSession, catalog: Catalog, box: SecretBox, templ
         source = await template_slug(session, app)
         if source not in f.link.templates:
             raise LinkInvalidError("this app cannot be linked here", field=f.id, app=slug)
+        # Labs and normal apps stay apart: never link across the two worlds.
+        if _is_lab(catalog, source) != (template.metadata.category == "security-lab"):
+            raise LinkInvalidError("labs and normal apps cannot be linked", field=f.id, app=slug)
         target = await target_of(session, catalog.get(source).template, app)
         if target is None:
             raise LinkInvalidError("this app does not say how to reach it", field=f.id, app=slug)
@@ -81,11 +84,21 @@ async def target_of(session: AsyncSession, template: Template,
                       database=_text(conn.database, ctx), user=_text(conn.user, ctx))  # fmt: skip
 
 
+def _is_lab(catalog: Catalog, slug: str | None) -> bool:
+    try:
+        return slug is not None and catalog.get(slug).template.metadata.category == "security-lab"
+    except NotFoundError:
+        return False
+
+
 def tool_templates(catalog: Catalog, source: str) -> list[Template]:
-    """The catalog's templates with a link field that may choose an app of ``source``."""
+    """The catalog's templates with a link field that may choose an app of ``source`` (never
+    across the labs/normal boundary)."""
+    src_lab = _is_lab(catalog, source)
     return sorted((e.template for e in catalog.entries()
-                  if any(f.link and source in f.link.templates
-                         for f in e.template.form.fields)),
+                  if (e.template.metadata.category == "security-lab") == src_lab
+                  and any(f.link and source in f.link.templates
+                          for f in e.template.form.fields)),
                   key=lambda t: t.metadata.slug)  # fmt: skip
 
 

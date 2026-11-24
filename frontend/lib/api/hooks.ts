@@ -26,6 +26,8 @@ import {
   type SystemStatus,
   type Health,
   type Releases,
+  type BatchPlanItem,
+  type LabsVpnStatus,
   type TemplateSummary,
   type UpdatePlan,
   type User,
@@ -256,6 +258,84 @@ export function useDeploy() {
   });
 }
 
+export type BatchItem = { template: string; name?: string; inputs?: Record<string, unknown>; access?: "public" | "lan" };
+
+// --- Labs VPN: one WireGuard for all labs, a roster, labs per student --------------------------------------
+export const useLabsVpn = (enabled = true) =>
+  useQuery({ queryKey: ["labs-vpn"], queryFn: () => api<LabsVpnStatus>("/labs/vpn"), enabled, refetchInterval: 15_000 });
+
+export function useEnableLabsVpn() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api<{ app_id: number; job_id?: number }>("/labs/vpn/enable", { method: "POST" }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["labs-vpn"] }),
+  });
+}
+
+/** Remove the labs VPN: the targets publish on the host again. Students' configs die with it. */
+export function useDisableLabsVpn() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api<{ labs: number }>("/labs/vpn/disable", { method: "POST" }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["labs-vpn"] });
+      qc.invalidateQueries({ queryKey: keys.apps });
+    },
+  });
+}
+
+function useLabsVpnMutation<V>(fn: (v: V) => Promise<unknown>) {
+  const qc = useQueryClient();
+  return useMutation({ mutationFn: fn, onSuccess: () => qc.invalidateQueries({ queryKey: ["labs-vpn"] }) });
+}
+
+/** The class roster: students are created with no lab (they reach nothing until assigned). */
+export const useCreateLabsStudents = () =>
+  useLabsVpnMutation((names: string[]) => api<number[]>("/labs/vpn/students", { method: "POST", body: { names } }));
+
+export const useSetStudentLabs = () =>
+  useLabsVpnMutation(({ id, labs }: { id: number; labs: string[] }) => api<void>(`/labs/vpn/students/${id}/labs`, { method: "PUT", body: { labs } }));
+
+/** Gives every student without a lab one, evenly over the deployed labs. */
+export const useDistributeLabs = () =>
+  useLabsVpnMutation(() => api<{ assigned: number }>("/labs/vpn/distribute", { method: "POST" }));
+
+/** Takes every student off every lab (they stay, with their configs). */
+export const useUnassignLabs = () =>
+  useLabsVpnMutation(() => api<{ removed: number }>("/labs/vpn/unassign", { method: "POST" }));
+
+export const useDeleteLabsStudent = () =>
+  useLabsVpnMutation((id: number) => api<void>(`/labs/vpn/students/${id}`, { method: "DELETE" }));
+
+export type DeployCapacity = { max_copies: number; memory_each_mb: number; available_mb: number; cpus: number };
+
+/** How many copies of a template the host can take (RAM/CPU). Refetched when the menu opens. */
+export const useDeployCapacity = (template: string, enabled: boolean) =>
+  useQuery({
+    queryKey: ["capacity", template],
+    queryFn: () => api<DeployCapacity>(`/apps/capacity/${template}`),
+    enabled,
+    staleTime: 10_000,
+  });
+
+/** Preview deploying `count` copies of a template: the IP and ports each one would get. */
+export function usePlanBatch() {
+  return useMutation({
+    mutationFn: ({ template, count, inputs }: { template: string; count: number; inputs?: Record<string, unknown> }) =>
+      api<BatchPlanItem[]>("/apps/plan/batch", { method: "POST", body: { template, count, inputs } }),
+  });
+}
+export type BatchResult = { template: string; ok: boolean; app: { app: App; job: JobRef } | null; error: string | null };
+
+/** Deploy up to 25 targets at once; each result says whether that one started. */
+export function useDeployBatch() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (items: BatchItem[]) => api<BatchResult[]>("/apps/batch", { method: "POST", body: { items } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.apps }),
+  });
+}
+
 export type AppAction = "start" | "stop" | "restart";
 
 export function useAppAction() {
@@ -272,6 +352,32 @@ export function useRemoveApp() {
   return useMutation({
     mutationFn: ({ id, removeData }: { id: number; removeData: boolean }) =>
       api<JobRef>(`/apps/${id}`, { method: "DELETE", query: { remove_data: String(removeData) } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.apps }),
+  });
+}
+
+/** Same lifecycle action over several apps at once (each is its own job/lock); one failure
+ *  never stops the others. Returns the jobs queued. */
+export function useBulkAppAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ids, action }: { ids: number[]; action: AppAction }) => {
+      const r = await Promise.allSettled(ids.map((id) => api<JobRef>(`/apps/${id}/${action}`, { method: "POST" })));
+      return r.flatMap((x) => (x.status === "fulfilled" ? [x.value] : []));
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.apps }),
+  });
+}
+
+/** Remove several apps at once. Returns the jobs queued. */
+export function useBulkRemoveApps() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ids, removeData }: { ids: number[]; removeData: boolean }) => {
+      const r = await Promise.allSettled(ids.map((id) =>
+        api<JobRef>(`/apps/${id}`, { method: "DELETE", query: { remove_data: String(removeData) } })));
+      return r.flatMap((x) => (x.status === "fulfilled" ? [x.value] : []));
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: keys.apps }),
   });
 }

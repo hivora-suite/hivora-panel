@@ -10,6 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 export function webAddress(web: Record<string, string>): string | undefined {
   if (web.web_vpn && !web.web && !web.web_lan) return web.web_vpn;
   const here = typeof window === "undefined" ? "" : window.location.hostname;
-  if (web.web && here && new URL(web.web).hostname === here) return web.web;
+  // URL.parse: null on an address without a host (e.g. "http://:8080" when the LAN IP is unknown).
+  if (web.web && here && URL.parse(web.web)?.hostname === here) return web.web;
   return web.web_lan ?? web.web ?? web.web_vpn;
 }

@@ -18,7 +18,7 @@ from hivora.addressing.models import AppNetwork, IpAssignment
 from hivora.addressing.plan import Taken
 from hivora.db.models import Setting
 from hivora.docker_gateway import ContainerInfo, DockerGateway
-from hivora.zones import Zone, list_zones, zone_network
+from hivora.zones import LABS_ZONE, Zone, list_zones, zone_network
 
 RANGE_SETTING = "addressing.range"
 ZONE_NETWORK_PREFIX = "hivora-zone-"
@@ -27,8 +27,14 @@ ZONE_NETWORK_PREFIX = "hivora-zone-"
 ADMIN_ZONE_SUBNET = "10.254.254.0/24"
 PANEL_IP = "10.254.254.254"
 ADMIN_VPN_SUBNET = "10.254.253.0/24"  # not 10.8.0.0/24: a user's own VPN keeps it
+# The security-labs zone and its single VPN also have fixed, reserved subnets (both system
+# zones, so they never clash with the Administration ones nor with user zones/apps).
+LABS_ZONE_SUBNET = "10.254.252.0/24"
+LABS_VPN_SUBNET = "10.254.251.0/24"
 ADMIN_NETWORKS = (Taken(ADMIN_ZONE_SUBNET, "zone:administration"),
-                  Taken(ADMIN_VPN_SUBNET, "vpn:admin-vpn"))  # fmt: skip
+                  Taken(ADMIN_VPN_SUBNET, "vpn:admin-vpn"),
+                  Taken(LABS_ZONE_SUBNET, "zone:security-labs"),
+                  Taken(LABS_VPN_SUBNET, "vpn:labs-vpn"))  # fmt: skip
 
 # What else is taken, outside the plan: the host's own networks and routes, the networks
 # of the VPNs (their tunnels). Given by the composition root (no hostfw nor vpn import).
@@ -156,8 +162,8 @@ class Addressing:
         it, else the next free /24 of the Hivora range."""
         if zone.subnet:
             return zone.subnet
-        if zone.is_system:  # Administration: the installer's (its network, the panel's IP)
-            zone.subnet = ADMIN_ZONE_SUBNET
+        if zone.is_system:  # fixed reserved subnets (Administration, security labs)
+            zone.subnet = LABS_ZONE_SUBNET if zone.slug == LABS_ZONE else ADMIN_ZONE_SUBNET
             await session.flush()
             return zone.subnet
         taken = await self.taken(session, skip_zone=zone.id)

@@ -15,6 +15,10 @@ const backend = process.env.HIVORA_BACKEND ?? "http://127.0.0.1:8000";
 const nextConfig: NextConfig = {
   ...(isDev
     ? {
+        // Dev resources are blocked from non-localhost origins (Next 16): allow the LAN IP.
+        allowedDevOrigins: ["192.168.1.131"],
+        agentRules: false,
+        devIndicators: false,
         async rewrites() {
           return [
             { source: "/api/:path*", destination: `${backend}/api/:path*` },

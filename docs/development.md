@@ -35,6 +35,7 @@ cd ../backend
 HIVORA_DATA_DIR=$HOME/hivora-dev/data HIVORA_VOLUMES_ROOT=$HOME/hivora-dev/srv \
 HIVORA_CATALOG_DIR=../templates HIVORA_FRONTEND_DIR=../frontend/out \
 HIVORA_DEV_INSECURE_COOKIES=true HIVORA_CHANGELOG_PATH=../CHANGELOG.md \
+HIVORA_HOST_LAN_IP=192.168.1.10 \
 uv run uvicorn --factory hivora.main:app --host 0.0.0.0 --port 8000
 ```
 

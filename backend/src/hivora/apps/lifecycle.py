@@ -11,6 +11,8 @@ import hivora.apps.links as links
 from hivora.apps.core import (
     DeployRequest,
     GamesDisabledError,
+    LabsDisabledError,
+    LabsVpnRequiredError,
     PortConflictError,
     UnsupportedArchitectureError,
     conflict_dict,
@@ -30,7 +32,7 @@ from hivora.jobs import Job, JobKind, JobQueue, JobStatus
 from hivora.state import StateStore
 from hivora.templates import Catalog, Template
 from hivora.templates.overrides import Overrides, ServiceOverrides
-from hivora.zones import get_zone
+from hivora.zones import LABS_ZONE, Zone, ensure_labs_zone, get_zone
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,6 +62,10 @@ class Deployer:
         entry = self.catalog.get(req.template)
         if entry.template.metadata.category == "games" and not self.planner.settings.games:
             raise GamesDisabledError("the games are turned off on this panel", template=entry.slug)
+        if entry.template.metadata.category == "security-lab" and not self.planner.settings.labs:
+            raise LabsDisabledError(
+                "the security labs are turned off on this panel", template=entry.slug
+            )
         if not entry.supports(self.catalog.host_arch()):
             raise UnsupportedArchitectureError(entry.slug, arch=self.catalog.host_arch())
         name = req.name.strip() or entry.template.metadata.name
@@ -68,7 +74,18 @@ class Deployer:
             select(Application.id).where(Application.slug == slug)
         ):
             raise ConflictError("slug already used", slug=slug)
-        zone = await get_zone(session, req.zone) if req.zone else None
+        zone: Zone | None
+        if entry.template.metadata.category == "security-lab":
+            zone = await ensure_labs_zone(session, self.clock)  # labs stay in their own zone
+            lab = entry.template.metadata.lab
+            # A target to scan (nmap…) only behind the labs VPN: each one alone at its own IP.
+            if lab and lab.needs_vpn and zone.slug not in await self.planner.vpn_zones(session):
+                raise LabsVpnRequiredError("enable the labs VPN first", template=entry.slug)
+        else:
+            zone = await get_zone(session, req.zone) if req.zone else None
+            # Only security labs and the zone's own VPN (one WireGuard for all labs) may sit here.
+            if zone and zone.slug == LABS_ZONE and entry.template.vpn is None:
+                raise ConflictError("the Labo zone only holds security labs", slug=zone.slug)
         return await self.planner.plan(
             session,
             entry,

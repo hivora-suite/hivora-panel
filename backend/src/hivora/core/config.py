@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     # The games of the catalog (install.env, HIVORA_GAMES; never stored). Off: hidden from
     # the catalog and refused to new deploys; game apps already there keep running.
     games: bool = True
+    # The security labs of the catalog (install.env, HIVORA_LABS; never stored). Off (default):
+    # the "security-lab" templates are hidden from the catalog and refused to new deploys. These
+    # are deliberately vulnerable targets for teaching, kept apart from normal apps.
+    labs: bool = False
     # The "Update" button (install.env, HIVORA_SELF_UPDATE; never stored). Off: only the
     # installer's command is shown (system.self_update).
     self_update: bool = True

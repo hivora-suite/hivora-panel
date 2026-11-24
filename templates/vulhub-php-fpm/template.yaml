@@ -1,0 +1,90 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-php-fpm
+  name: PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - php-fpm
+  description: PHP-FPM — PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/php/fpm
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/php/fpm
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - auth-bypass
+    - php-fpm
+    - rce
+    difficulty: medium
+    summary: PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/php/fpm
+        PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with some additional features useful for sites of any size, especially busier sites. When misconfigured, PHP-FPM can be accessed directly through the FastCGI protocol, allowing attackers to execute arbitrary PHP code.
+        This vulnerability occurs when PHP-FPM is exposed to the network without proper access controls, allowing unauthorized access to the FastCGI interface.
+        References:
+        - <https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html>
+        - <https://www.php.net/manual/en/install.fpm.php>
+        # Environment Setup
+        Execute the following command to start the vulnerable PHP-FPM server:
+        $ docker compose up -d
+        After the server starts, the PHP-FPM server will listen on port 9000.
+        # Vulnerability Reproduction
+        A proof-of-concept exploit script is available at: https://gist.github.com/phith0n/9615e2420f31048f7e30f3937356cf75
+        The script allows you to:
+        1. Connect directly to the PHP-FPM port
+        2. Send crafted FastCGI requests
+        3. Execute arbitrary PHP code on the target server
+        Successful exploitation result:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/php/fpm
+        PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with some additional features useful for sites of any size, especially busier sites. When misconfigured, PHP-FPM can be accessed directly through the FastCGI protocol, allowing attackers to execute arbitrary PHP code.
+        This vulnerability occurs when PHP-FPM is exposed to the network without proper access controls, allowing unauthorized access to the FastCGI interface.
+        References:
+        - <https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html>
+        - <https://www.php.net/manual/en/install.fpm.php>
+        # Environment Setup
+        Execute the following command to start the vulnerable PHP-FPM server:
+        $ docker compose up -d
+        After the server starts, the PHP-FPM server will listen on port 9000.
+        # Vulnerability Reproduction
+        A proof-of-concept exploit script is available at: https://gist.github.com/phith0n/9615e2420f31048f7e30f3937356cf75
+        The script allows you to:
+        1. Connect directly to the PHP-FPM port
+        2. Send crafted FastCGI requests
+        3. Execute arbitrary PHP code on the target server
+        Successful exploitation result:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_9000
+    group:
+      fr: Accès
+      en: Access
+    label: php 9000/tcp
+    type: port
+    default: 9000
+services:
+  php:
+    role: main
+    image: vulhub/php
+    tag: 7.1.3-fpm@sha256:1306ea4def7e970aed2374703005ad4ee3db7d2cbb739d1571b41c1cf28ea7e6
+    frozen: true
+    ports:
+    - container: 9000
+      host: '{{ form.port_9000 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+update:
+  strategy: manual

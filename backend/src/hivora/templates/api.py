@@ -31,6 +31,7 @@ class TemplateSummary(BaseModel):
     compatible: bool  # supports this host's CPU architecture
     arch: list[str]  # architectures the template runs on
     verified: bool  # adapted and tested for Hivora
+    lab: dict[str, Any] | None  # "security-lab" only: kill-chain phase, CVEs, solution…
 
 
 class TemplateDetail(TemplateSummary):
@@ -49,8 +50,11 @@ def icon_url(rt: Runtime, slug: str) -> str | None:
     return f"/api/v1/templates/{slug}/icon" if rt.icons.path(slug) else None
 
 
-def summary(rt: Runtime, entry: CatalogEntry) -> TemplateSummary:
+def summary(rt: Runtime, entry: CatalogEntry, *, solution: bool = True) -> TemplateSummary:
     m = entry.template.metadata
+    # The list leaves the labs' solutions out (long guides, over 1 MB in all): one lab's
+    # detail carries it.
+    exclude = None if solution else {"solution"}
     return TemplateSummary(
         slug=m.slug,
         name=m.name,
@@ -62,14 +66,17 @@ def summary(rt: Runtime, entry: CatalogEntry) -> TemplateSummary:
         compatible=entry.supports(rt.catalog.host_arch()),
         arch=list(entry.template.requirements.arch),
         verified=m.verified,
+        lab=m.lab.model_dump(mode="json", exclude=exclude) if m.lab else None,
     )
 
 
 @router.get("")
 async def list_templates(_: Viewer, rt: RuntimeDep) -> list[TemplateSummary]:
-    games = rt.settings.games  # off: set at install (install.env), the games are hidden
-    return [summary(rt, e) for e in rt.catalog.entries()
-            if games or e.template.metadata.category != "games"]  # fmt: skip
+    # off at install (install.env): games and security labs are hidden from the catalog.
+    games, labs = rt.settings.games, rt.settings.labs
+    hidden = {c for c, on in (("games", games), ("security-lab", labs)) if not on}
+    return [summary(rt, e, solution=False) for e in rt.catalog.entries()
+            if e.template.metadata.category not in hidden]  # fmt: skip
 
 
 @router.get("/{slug}")

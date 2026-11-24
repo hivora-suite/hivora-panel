@@ -820,6 +820,184 @@
         "title": "BackupsOut",
         "type": "object"
       },
+      "BatchIn": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BatchItemIn"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "BatchIn",
+        "type": "object"
+      },
+      "BatchItemIn": {
+        "properties": {
+          "access": {
+            "anyOf": [
+              {
+                "enum": [
+                  "public",
+                  "lan"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Inputs",
+            "type": "object"
+          },
+          "name": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Name",
+            "type": "string"
+          },
+          "template": {
+            "title": "Template",
+            "type": "string"
+          }
+        },
+        "required": [
+          "template"
+        ],
+        "title": "BatchItemIn",
+        "type": "object"
+      },
+      "BatchPlanIn": {
+        "properties": {
+          "count": {
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Inputs",
+            "type": "object"
+          },
+          "template": {
+            "title": "Template",
+            "type": "string"
+          }
+        },
+        "required": [
+          "template",
+          "count"
+        ],
+        "title": "BatchPlanIn",
+        "type": "object"
+      },
+      "BatchPlanItemOut": {
+        "properties": {
+          "conflicts": {
+            "items": {
+              "$ref": "#/components/schemas/ConflictOut"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "title": "Inputs",
+            "type": "object"
+          },
+          "ips": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ips",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ports": {
+            "items": {
+              "$ref": "#/components/schemas/PortOut"
+            },
+            "title": "Ports",
+            "type": "array"
+          },
+          "zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone"
+          }
+        },
+        "required": [
+          "name",
+          "inputs",
+          "zone",
+          "ips",
+          "ports",
+          "conflicts"
+        ],
+        "title": "BatchPlanItemOut",
+        "type": "object"
+      },
+      "BatchResultOut": {
+        "properties": {
+          "app": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeployOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "template": {
+            "title": "Template",
+            "type": "string"
+          }
+        },
+        "required": [
+          "template",
+          "ok"
+        ],
+        "title": "BatchResultOut",
+        "type": "object"
+      },
       "BlockIn": {
         "properties": {
           "address": {
@@ -930,6 +1108,34 @@
           "working_dir"
         ],
         "title": "CandidateOut",
+        "type": "object"
+      },
+      "CapacityOut": {
+        "properties": {
+          "available_mb": {
+            "title": "Available Mb",
+            "type": "integer"
+          },
+          "cpus": {
+            "title": "Cpus",
+            "type": "integer"
+          },
+          "max_copies": {
+            "title": "Max Copies",
+            "type": "integer"
+          },
+          "memory_each_mb": {
+            "title": "Memory Each Mb",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "max_copies",
+          "memory_each_mb",
+          "available_mb",
+          "cpus"
+        ],
+        "title": "CapacityOut",
         "type": "object"
       },
       "ChangeOut": {
@@ -3202,6 +3408,143 @@
         "title": "KeyIn",
         "type": "object"
       },
+      "LabsVpnLabOut": {
+        "properties": {
+          "app_id": {
+            "title": "App Id",
+            "type": "integer"
+          },
+          "ip": {
+            "title": "Ip",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "online": {
+            "title": "Online",
+            "type": "integer"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "students": {
+            "title": "Students",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "app_id",
+          "ip",
+          "students",
+          "online"
+        ],
+        "title": "LabsVpnLabOut",
+        "type": "object"
+      },
+      "LabsVpnStatusOut": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "host": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Host"
+          },
+          "labs": {
+            "items": {
+              "$ref": "#/components/schemas/LabsVpnLabOut"
+            },
+            "title": "Labs",
+            "type": "array"
+          },
+          "running": {
+            "title": "Running",
+            "type": "boolean"
+          },
+          "students": {
+            "items": {
+              "$ref": "#/components/schemas/LabsVpnStudentOut"
+            },
+            "title": "Students",
+            "type": "array"
+          },
+          "subnet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subnet"
+          }
+        },
+        "required": [
+          "enabled",
+          "running",
+          "host",
+          "subnet",
+          "labs",
+          "students"
+        ],
+        "title": "LabsVpnStatusOut",
+        "type": "object"
+      },
+      "LabsVpnStudentOut": {
+        "properties": {
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "labs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Labs",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "online": {
+            "title": "Online",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "labs",
+          "enabled",
+          "online",
+          "address"
+        ],
+        "title": "LabsVpnStudentOut",
+        "type": "object"
+      },
       "LayoutIn": {
         "properties": {
           "positions": {
@@ -3604,6 +3947,14 @@
               "$ref": "#/components/schemas/ConflictOut"
             },
             "title": "Conflicts",
+            "type": "array"
+          },
+          "ips": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Ips",
             "type": "array"
           },
           "name": {
@@ -5755,6 +6106,39 @@
         "title": "StatusOut",
         "type": "object"
       },
+      "StudentLabsIn": {
+        "properties": {
+          "labs": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Labs",
+            "type": "array"
+          }
+        },
+        "title": "StudentLabsIn",
+        "type": "object"
+      },
+      "StudentsIn": {
+        "properties": {
+          "names": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Names",
+            "type": "array"
+          }
+        },
+        "required": [
+          "names"
+        ],
+        "title": "StudentsIn",
+        "type": "object"
+      },
       "SummaryItemOut": {
         "properties": {
           "label": {
@@ -5826,6 +6210,10 @@
             "title": "Games",
             "type": "boolean"
           },
+          "labs": {
+            "title": "Labs",
+            "type": "boolean"
+          },
           "python": {
             "title": "Python",
             "type": "string"
@@ -5840,7 +6228,8 @@
           "docker_version",
           "arch",
           "python",
-          "games"
+          "games",
+          "labs"
         ],
         "title": "SystemInfo",
         "type": "object"
@@ -6223,6 +6612,18 @@
             ],
             "title": "Icon Url"
           },
+          "lab": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lab"
+          },
           "links": {
             "additionalProperties": {
               "type": "string"
@@ -6281,6 +6682,7 @@
           "compatible",
           "arch",
           "verified",
+          "lab",
           "links",
           "requirements",
           "form",
@@ -6340,6 +6742,18 @@
             ],
             "title": "Icon Url"
           },
+          "lab": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lab"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -6374,7 +6788,8 @@
           "description",
           "compatible",
           "arch",
-          "verified"
+          "verified",
+          "lab"
         ],
         "title": "TemplateSummary",
         "type": "object"
@@ -6956,6 +7371,14 @@
           "diff": {
             "title": "Diff",
             "type": "string"
+          },
+          "ips": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Ips",
+            "type": "array"
           },
           "name": {
             "title": "Name",
@@ -7831,7 +8254,7 @@
   },
   "info": {
     "title": "Hivora",
-    "version": "0.5.0"
+    "version": "0.5.3"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -8136,6 +8559,95 @@
         ]
       }
     },
+    "/api/v1/apps/batch": {
+      "post": {
+        "description": "Deploy each target on its own (one lock/job per app): a failure is reported for that\nitem and never stops the others, so a whole class of labs goes up in one click.",
+        "operationId": "deploy_batch_api_v1_apps_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BatchResultOut"
+                  },
+                  "title": "Response Deploy Batch Api V1 Apps Batch Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Deploy Batch",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/api/v1/apps/capacity/{template}": {
+      "get": {
+        "description": "The most copies of this template the host can reasonably run, from free RAM, the CPU\ncount and the template's declared memory. Drives the deploy menu's quantity limit.",
+        "operationId": "capacity_api_v1_apps_capacity__template__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template",
+            "required": true,
+            "schema": {
+              "title": "Template",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapacityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Capacity",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
     "/api/v1/apps/custom": {
       "post": {
         "operationId": "deploy_custom_api_v1_apps_custom_post",
@@ -8352,6 +8864,52 @@
           }
         },
         "summary": "Plan",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/api/v1/apps/plan/batch": {
+      "post": {
+        "description": "Preview deploying ``count`` copies of a template: the fixed IP and host ports each one\ngets. Host ports are picked from a high range and occupied ones are skipped, so copies do\nnot clash with each other or with running apps. Nothing is written (all planned in one\nsession, so the IPs and ports are distinct and any remaining conflict is seen).",
+        "operationId": "plan_batch_api_v1_apps_plan_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPlanIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BatchPlanItemOut"
+                  },
+                  "title": "Response Plan Batch Api V1 Apps Plan Batch Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Plan Batch",
         "tags": [
           "apps"
         ]
@@ -13781,6 +14339,399 @@
         "summary": "Cancel Job",
         "tags": [
           "jobs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn": {
+      "get": {
+        "operationId": "status_api_v1_labs_vpn_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabsVpnStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Status",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/configs.zip": {
+      "get": {
+        "description": "The class export: a README, then one folder per student (only those on ``lab`` if\ngiven) with their WireGuard .conf and a .txt naming their targets' IPs.",
+        "operationId": "configs_zip_api_v1_labs_vpn_configs_zip_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lab",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lab"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "fr",
+              "enum": [
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Configs Zip",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/disable": {
+      "post": {
+        "description": "Remove the labs VPN (students' configs die with it). The labs publish their ports on the\nhost again. Refused while a target that must be scanned (``needs_vpn``) is deployed.",
+        "operationId": "disable_api_v1_labs_vpn_disable_post",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Disable Api V1 Labs Vpn Disable Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Disable",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/distribute": {
+      "post": {
+        "description": "Give every student without a lab one, spreading them evenly over the deployed labs.",
+        "operationId": "distribute_api_v1_labs_vpn_distribute_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Distribute Api V1 Labs Vpn Distribute Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Distribute",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/enable": {
+      "post": {
+        "description": "Deploy the one WireGuard that reaches the labs zone (so labs stop publishing on the host\nand each is reachable at its own IP). Idempotent.",
+        "operationId": "enable_api_v1_labs_vpn_enable_post",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Enable Api V1 Labs Vpn Enable Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Enable",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/students": {
+      "post": {
+        "description": "Add students to the roster, with no lab yet (they reach nothing until assigned).",
+        "operationId": "create_students_api_v1_labs_vpn_students_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Response Create Students Api V1 Labs Vpn Students Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Students",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/students/{cid}": {
+      "delete": {
+        "operationId": "delete_student_api_v1_labs_vpn_students__cid__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cid",
+            "required": true,
+            "schema": {
+              "title": "Cid",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Student",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/students/{cid}/config": {
+      "get": {
+        "operationId": "student_config_api_v1_labs_vpn_students__cid__config_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cid",
+            "required": true,
+            "schema": {
+              "title": "Cid",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Student Config",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/students/{cid}/labs": {
+      "put": {
+        "operationId": "set_student_labs_api_v1_labs_vpn_students__cid__labs_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cid",
+            "required": true,
+            "schema": {
+              "title": "Cid",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentLabsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Student Labs",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/students/{cid}/qr": {
+      "get": {
+        "operationId": "student_qr_api_v1_labs_vpn_students__cid__qr_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cid",
+            "required": true,
+            "schema": {
+              "title": "Cid",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Student Qr",
+        "tags": [
+          "labs"
+        ]
+      }
+    },
+    "/api/v1/labs/vpn/unassign": {
+      "post": {
+        "description": "Take every student off every lab (students and their configs stay; they reach nothing).",
+        "operationId": "unassign_api_v1_labs_vpn_unassign_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Unassign Api V1 Labs Vpn Unassign Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Unassign",
+        "tags": [
+          "labs"
         ]
       }
     },

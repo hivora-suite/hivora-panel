@@ -1,0 +1,126 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-hadoop-unauthorized-yarn
+  name: Hadoop YARN ResourceManager Unauthorized Access
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - hadoop-yarn
+  description: Hadoop YARN — Hadoop YARN ResourceManager Unauthorized Access (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - auth-bypass
+    - hadoop-yarn
+    - rce
+    difficulty: medium
+    summary: Hadoop YARN ResourceManager Unauthorized Access
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn
+        Hadoop YARN (Yet Another Resource Negotiator) is Apache Hadoop's cluster resource management system. If the YARN ResourceManager is exposed to the public internet without proper access controls, an attacker can submit and execute arbitrary applications on the cluster.
+        References:
+        - <http://archive.hack.lu/2016/Wavestone%20-%20Hack.lu%202016%20-%20Hadoop%20safari%20-%20Hunting%20for%20vulnerabilities%20-%20v1.0.pdf>
+        - <https://hadoop.apache.org/docs/r2.7.3/hadoop-yarn/hadoop-yarn-site/ResourceManagerRest.html>
+        # Environment Setup
+        Execute the following command to start vulnerable Hadoop YARN environment:
+        $ docker compose up -d
+        After the environment starts, visit `http://your-ip:8088` to access the Hadoop YARN ResourceManager WebUI.
+        # Vulnerability Reproduction
+        The exploitation method differs slightly from the original presentation. Even without a Hadoop client, you can submit tasks directly through the REST API (https://hadoop.apache.org/docs/r2.7.3/hadoop-yarn/hadoop-yarn-site/ResourceManagerRest.html).
+        The exploitation process is as follows:
+        1. Set up a listener on your local machine to receive the reverse shell connection
+        2. Call the New Application API to create an Application
+        3. Call the Submit Application API to submit the malicious application
+        For detailed implementation, refer to the exploit script (exploit.py).
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn
+        Hadoop YARN (Yet Another Resource Negotiator) is Apache Hadoop's cluster resource management system. If the YARN ResourceManager is exposed to the public internet without proper access controls, an attacker can submit and execute arbitrary applications on the cluster.
+        References:
+        - <http://archive.hack.lu/2016/Wavestone%20-%20Hack.lu%202016%20-%20Hadoop%20safari%20-%20Hunting%20for%20vulnerabilities%20-%20v1.0.pdf>
+        - <https://hadoop.apache.org/docs/r2.7.3/hadoop-yarn/hadoop-yarn-site/ResourceManagerRest.html>
+        # Environment Setup
+        Execute the following command to start vulnerable Hadoop YARN environment:
+        $ docker compose up -d
+        After the environment starts, visit `http://your-ip:8088` to access the Hadoop YARN ResourceManager WebUI.
+        # Vulnerability Reproduction
+        The exploitation method differs slightly from the original presentation. Even without a Hadoop client, you can submit tasks directly through the REST API (https://hadoop.apache.org/docs/r2.7.3/hadoop-yarn/hadoop-yarn-site/ResourceManagerRest.html).
+        The exploitation process is as follows:
+        1. Set up a listener on your local machine to receive the reverse shell connection
+        2. Call the New Application API to create an Application
+        3. Call the Submit Application API to submit the malicious application
+        For detailed implementation, refer to the exploit script (exploit.py).
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_8088
+    group:
+      fr: Accès
+      en: Access
+    label: resourcemanager 8088/tcp
+    type: port
+    default: 8088
+services:
+  namenode:
+    role: sidecar
+    image: vulhub/hadoop
+    tag: 2.8.1@sha256:2f68ef5c55a77c446c808c7cf3a58ee558082e61c5bb0e46906e234f31b738da
+    frozen: true
+    env:
+      HDFS_CONF_dfs_namenode_name_dir: file:///hadoop/dfs/name
+      CLUSTER_NAME: vulhub
+      HDFS_CONF_dfs_replication: '1'
+    command: /namenode.sh
+  datanode:
+    role: sidecar
+    image: vulhub/hadoop
+    tag: 2.8.1@sha256:2f68ef5c55a77c446c808c7cf3a58ee558082e61c5bb0e46906e234f31b738da
+    frozen: true
+    env:
+      HDFS_CONF_dfs_datanode_data_dir: file:///hadoop/dfs/data
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      CLUSTER_NAME: vulhub
+      HDFS_CONF_dfs_replication: '1'
+    command: /datanode.sh
+  resourcemanager:
+    role: main
+    image: vulhub/hadoop
+    tag: 2.8.1@sha256:2f68ef5c55a77c446c808c7cf3a58ee558082e61c5bb0e46906e234f31b738da
+    frozen: true
+    env:
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      YARN_CONF_yarn_log___aggregation___enable: 'true'
+    command: /resourcemanager.sh
+    ports:
+    - container: 8088
+      host: '{{ form.port_8088 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+  nodemanager:
+    role: sidecar
+    image: vulhub/hadoop
+    tag: 2.8.1@sha256:2f68ef5c55a77c446c808c7cf3a58ee558082e61c5bb0e46906e234f31b738da
+    frozen: true
+    env:
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      YARN_CONF_yarn_resourcemanager_hostname: resourcemanager
+      YARN_CONF_yarn_log___aggregation___enable: 'true'
+      YARN_CONF_yarn_nodemanager_remote___app___log___dir: /app-logs
+    command: /nodemanager.sh
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_8088 }}

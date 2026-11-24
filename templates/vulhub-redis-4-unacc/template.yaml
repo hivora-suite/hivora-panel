@@ -1,0 +1,80 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-redis-4-unacc
+  name: Redis 4.x/5.x Command Execution due to Master-Slave Replication
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - redis
+  description: Redis — Redis 4.x/5.x Command Execution due to Master-Slave Replication (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/redis/4-unacc
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/redis/4-unacc
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - database
+    - rce
+    - redis
+    difficulty: medium
+    summary: Redis 4.x/5.x Command Execution due to Master-Slave Replication
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/redis/4-unacc
+        Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker.
+        Redis which version starts from 4.0, prior to 5.0.5, can be exploit through the synchronisation between master and slave by an authenticated visitor.
+        Reference:
+        - <https://2018.zeronights.ru/wp-content/uploads/materials/15-redis-post-exploitation.pdf>
+        # Vulnerability Environment
+        Execute following command to start a Redis server 4.0.14:
+        $ docker compose up -d
+        After server is started, you can connect to this server without credentials by `redis-cli`:
+        $ redis-cli -h your-ip
+        # Exploit
+        Use this script (https://github.com/vulhub/redis-rogue-getshell) to execute arbitrary commands:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/redis/4-unacc
+        Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker.
+        Redis which version starts from 4.0, prior to 5.0.5, can be exploit through the synchronisation between master and slave by an authenticated visitor.
+        Reference:
+        - <https://2018.zeronights.ru/wp-content/uploads/materials/15-redis-post-exploitation.pdf>
+        # Vulnerability Environment
+        Execute following command to start a Redis server 4.0.14:
+        $ docker compose up -d
+        After server is started, you can connect to this server without credentials by `redis-cli`:
+        $ redis-cli -h your-ip
+        # Exploit
+        Use this script (https://github.com/vulhub/redis-rogue-getshell) to execute arbitrary commands:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_6379
+    group:
+      fr: Accès
+      en: Access
+    label: redis 6379/tcp
+    type: port
+    default: 6379
+services:
+  redis:
+    role: main
+    image: vulhub/redis
+    tag: 4.0.14@sha256:f7797f03fb3784c8d86588a69fc3e0c8194ccba16f0f8cf9ffe47b60fea84ed4
+    frozen: true
+    ports:
+    - container: 6379
+      host: '{{ form.port_6379 }}'
+      protocol: tcp
+      purpose: other
+      exposure: lan
+update:
+  strategy: manual

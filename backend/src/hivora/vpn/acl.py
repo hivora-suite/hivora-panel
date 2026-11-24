@@ -16,8 +16,13 @@ ROUTINGS = ("default", "all", "access", "custom")
 def access_of(peer: VpnPeer, vpn: VpnApp, subnets: dict[str, tuple[str, ...]]) -> wg.Access:
     a = peer.access or {"internet": True, "lan": True, "zones": vpn.zones}
     zones = [z for z in a.get("zones") or [] if z in vpn.zones]
-    return wg.Access(peer.address, bool(a.get("internet")), bool(a.get("lan")),
-                     tuple(n for z in zones for n in subnets.get(z, ())))  # fmt: skip
+    # "hosts": single addresses only (a labs student reaches their own targets, not the zone).
+    nets = (
+        tuple(f"{h}/32" for h in a.get("hosts") or [])
+        if "hosts" in a
+        else tuple(n for z in zones for n in subnets.get(z, ()))
+    )
+    return wg.Access(peer.address, bool(a.get("internet")), bool(a.get("lan")), nets)
 
 
 def is_active(peer: VpnPeer, now: datetime) -> bool:
@@ -30,7 +35,8 @@ def client_out(c: VpnPeer, vpn: VpnApp, st: wg.PeerStats, now: datetime) -> dict
     return {
         "id": c.id, "name": c.name, "address": c.address, "enabled": c.enabled,
         "active": is_active(c, now), "expires_at": c.expires_at,
-        "access": {"internet": a.internet, "lan": a.lan, "zones": zones},
+        "access": {"internet": a.internet, "lan": a.lan, "zones": zones,
+                   "hosts": (c.access or {}).get("hosts")},
         "routing": c.routing, "allowed_ips": c.allowed_ips, "public_key": c.public_key,
         "latest_handshake": st.latest_handshake, "online": st.online,
         "endpoint": st.endpoint, "rx": st.rx, "tx": st.tx,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, Ban, Boxes, BrickWall, ChevronDown, Container, FileCode, Globe, LayoutDashboard, LayoutGrid, LogOut, Menu, Network, Route, Search, Server, Settings, Share2, ShieldBan, ShieldCheck, Users, Waypoints } from "lucide-react";
+import { Activity, Ban, Boxes, BrickWall, Bug, ChevronDown, Container, Crosshair, FileCode, Globe, KeyRound, LayoutDashboard, LayoutGrid, LogOut, Menu, Network, Route, Search, Server, Settings, Share2, ShieldBan, ShieldCheck, Users, Waypoints } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SystemAlerts, needsAttention } from "@/features/system/system-alerts";
 import { ApiError, api, type Me, type Role } from "@/lib/api/client";
-import { useLogout, useMe, useReleases, useSystemStatus } from "@/lib/api/hooks";
+import { useLogout, useMe, useReleases, useSystemInfo, useSystemStatus } from "@/lib/api/hooks";
 import { useI18n, type MessageKey } from "@/lib/i18n";
 import { readPref, writePref } from "@/lib/prefs";
 import { RealtimeProvider, useConnected } from "@/lib/realtime";
@@ -57,8 +57,9 @@ export const FIREWALL_TABS: Entry[] = [
 ];
 
 type NavItem = Entry & { role: Role; also?: string[]; sub?: Entry[] };
-// `tone`: the group's hue (--g), for its header, edge and active bar.
-type NavGroup = { key: string; label: MessageKey; tone: string; items: NavItem[] };
+// `tone`: the group's hue (--g), for its header, edge and active bar. `flag`: a SystemInfo
+// switch that must be on for the group to show (e.g. "labs", off by default).
+type NavGroup = { key: string; label: MessageKey; tone: string; items: NavItem[]; flag?: "labs" };
 
 // The side menu, grouped. `also`: other paths under that entry (a site's page belongs to Sites);
 // `sub`: its pages, listed under it while one is open (wide screens). System is the
@@ -85,6 +86,18 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/topology/", label: "nav.topology", icon: Share2, role: "viewer" },
       { href: "/addressing/", label: "nav.addressing", icon: Waypoints, role: "viewer" },
       { href: "/firewall/", label: "nav.firewall", icon: BrickWall, role: "admin", sub: FIREWALL_TABS },
+    ],
+  },
+  {
+    key: "labs",
+    label: "nav.group.cyber",
+    tone: "[--g:var(--nav-labs)]",
+    flag: "labs",
+    items: [
+      { href: "/labs/", label: "nav.killchain", icon: Crosshair, role: "viewer", also: ["/deploy/"] },
+      { href: "/labs/dashboard/", label: "nav.labs.dashboard", icon: Bug, role: "viewer" },
+      { href: "/labs/students/", label: "nav.labs.students", icon: Users, role: "viewer" },
+      { href: "/labs/vpn/", label: "nav.labs.vpn", icon: KeyRound, role: "viewer" },
     ],
   },
   {
@@ -313,6 +326,9 @@ function NavTree({ pathname, can, attention, onNavigate }: {
 }) {
   const { t } = useI18n();
   const current = activeHref(pathname);
+  const { data: info } = useSystemInfo();
+  // The Cybersecurity group only shows when the labs are turned on (install.env, off by default).
+  const groups = NAV_GROUPS.filter((g) => !g.flag || info?.[g.flag]);
   // Only drawn once signed in (never prerendered): the browser's preferences are there.
   const [folded, setFolded] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(NAV_GROUPS.map((g) => [g.key, readPref(`fold.nav.${g.key}`) === "1"])),
@@ -364,7 +380,7 @@ function NavTree({ pathname, can, attention, onNavigate }: {
   return (
     <nav aria-label={t("nav.menu")} className="flex flex-col gap-1">
       {link(NAV_HOME)}
-      {NAV_GROUPS.map((g) => {
+      {groups.map((g) => {
         const items = g.items.filter((n) => can(n.role));
         if (items.length === 0) return null;
         const open = !folded[g.key];

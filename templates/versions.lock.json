@@ -35,6 +35,10 @@
     "version": "1.0.0",
     "checksum": "fe2f63943398e84e1e4738f3cf34aaff7926c5ede64ec87cd939cc23e46ecc7d"
   },
+  "dvwa": {
+    "version": "1.1.0",
+    "checksum": "f23e06657b8108b44b1458d583744c027b41133437feb0d3be39e79d32e19e27"
+  },
   "enshrouded": {
     "version": "1.0.0",
     "checksum": "c5ffe9431dbb951536b40772a4025d9ea61cf1f2375061b32dfb312a4a093d19"
@@ -70,6 +74,10 @@
   "jellyfin": {
     "version": "1.0.0",
     "checksum": "f58f4de695d7cb3e81ff65dba6d64db72b422e9c751bf196b31239fdb3eeccf6"
+  },
+  "juice-shop": {
+    "version": "1.1.0",
+    "checksum": "f8193f4eed364062609108ee2e53c0f4f611ff4292cb71d122bcb8c630134de2"
   },
   "mariadb": {
     "version": "1.2.0",
@@ -166,6 +174,870 @@
   "vaultwarden": {
     "version": "1.3.0",
     "checksum": "9afc71d92ecdb15d8ea2daf622f752df2bab1ddfbb9470469aa1973f23538f8a"
+  },
+  "vulhub-1panel-cve-2024-39907": {
+    "version": "1.0.0",
+    "checksum": "1975f88319ca01a460c7f837bf99c6d0a77b26f6f536ffc7993cac0f6ec0d32f"
+  },
+  "vulhub-activemq-cve-2015-5254": {
+    "version": "1.0.0",
+    "checksum": "49b51f73bb7b2be21eeb72e66d6cfb8cec553437327a7d2d826146dddde834d8"
+  },
+  "vulhub-activemq-cve-2016-3088": {
+    "version": "1.0.0",
+    "checksum": "01c1fd0bbd4f39ee9938ea200a2746a69f2250f69b36b4f5532f2003f8ad865b"
+  },
+  "vulhub-activemq-cve-2022-41678": {
+    "version": "1.0.0",
+    "checksum": "74f2e4d36ef08b8bf631037e226955d5aca67dec9c30f71b240f877fa67e25c4"
+  },
+  "vulhub-activemq-cve-2023-46604": {
+    "version": "1.0.0",
+    "checksum": "5049f1defab3cf33d5704f035371adb48c28ca070cfe1c01c88c6537ebc6e385"
+  },
+  "vulhub-activemq-cve-2024-32114": {
+    "version": "1.0.0",
+    "checksum": "97a81ce23019a14abf493a1e4b054e12fe0fcb8eeb5d9b23ef01cfe809f2b993"
+  },
+  "vulhub-activemq-cve-2026-34197": {
+    "version": "1.0.0",
+    "checksum": "82675e9a60f86133c6ab8f1133b5e2f0cbacd24f9ab56e32d5d800dc57bae724"
+  },
+  "vulhub-adminer-cve-2021-21311": {
+    "version": "1.0.0",
+    "checksum": "234342698a55c13dd6b8cc9232a085dba2015217e9ca4600349b0828b48beb85"
+  },
+  "vulhub-adminer-cve-2021-43008": {
+    "version": "1.0.0",
+    "checksum": "f8742643c92e7a5853e6d38c560782935cacd4102fdcb01cbab4e2bacbc3fa9b"
+  },
+  "vulhub-airflow-cve-2020-11978": {
+    "version": "1.0.0",
+    "checksum": "756227f6716d036a946d6c8e829dd6a186932ab56905b6727fff721b9d5949ae"
+  },
+  "vulhub-airflow-cve-2020-11981": {
+    "version": "1.0.0",
+    "checksum": "189f85ebab304a499565b69da993c59e7ae73ced23532e5f21059f7c0dd155fd"
+  },
+  "vulhub-aj-report-cnvd-2024-15077": {
+    "version": "1.0.0",
+    "checksum": "567dde6b5a625072d7b10b6f22f9140e6a84bec97aac020f5c8ddacb5e628fde"
+  },
+  "vulhub-apache-cxf-cve-2024-28752": {
+    "version": "1.0.0",
+    "checksum": "8b45360711b4a94e681f44be87f248a4fc9744919f011ef95708feb97e91a7a9"
+  },
+  "vulhub-apache-druid-cve-2021-25646": {
+    "version": "1.0.0",
+    "checksum": "84e82ed9237cff98a19e416d2f3c51f9aac36bab1f77b1fa029cc4c99ce9549c"
+  },
+  "vulhub-apereo-cas-4-1-rce": {
+    "version": "1.0.0",
+    "checksum": "6b020242a9a85f80d2e2e3a04286f4f9f465f41cb7a7940be39fd084bc7a6b12"
+  },
+  "vulhub-aria2-rce": {
+    "version": "1.0.0",
+    "checksum": "8e46f03d3c0ebad9a33bedeec30187e6e3cbd15efc31b51e1961d3600e39d467"
+  },
+  "vulhub-cmsms-cve-2019-9053": {
+    "version": "1.0.0",
+    "checksum": "82021812d4332d2881bbfe03c22d0a77640ff301ce46e8cb37ac43d781b520e7"
+  },
+  "vulhub-cmsms-cve-2021-26120": {
+    "version": "1.0.0",
+    "checksum": "6d864b37c2e3a9f7c8ef544607fc1fc22dd33f38d300d4fc75f9a5acbf53c470"
+  },
+  "vulhub-coldfusion-cve-2010-2861": {
+    "version": "1.0.0",
+    "checksum": "56f4b4757902f1d66799a1b378e6591bf0a41821b7e7c99bb9ea3e7e5edc98e2"
+  },
+  "vulhub-coldfusion-cve-2017-3066": {
+    "version": "1.0.0",
+    "checksum": "938395632f26073659afd23031b59eb46a178920eb62593fd33c6fffb2c8a8ed"
+  },
+  "vulhub-coldfusion-cve-2023-26360": {
+    "version": "1.0.0",
+    "checksum": "bda81f7a8b8901fa6147234300f7e04107f5eaafc2f1ed157485068ae015c7aa"
+  },
+  "vulhub-coldfusion-cve-2023-29300": {
+    "version": "1.0.0",
+    "checksum": "f9a037fb5c1b7de8b697b482bd0f5d7effe636f72c0aedc12277e013343a6872"
+  },
+  "vulhub-comfyui-cve-2025-67303": {
+    "version": "1.0.0",
+    "checksum": "073c17ec9ff0523c1459137aee9a15b12fda01e8659ef37a2879ee5d2e3bd14f"
+  },
+  "vulhub-comfyui-cve-2026-22777": {
+    "version": "1.0.0",
+    "checksum": "ae959f582f87400c4faa25373fbc7e6f505882409bacfdb48a219a3d3e00036a"
+  },
+  "vulhub-confluence-cve-2023-22515": {
+    "version": "1.0.0",
+    "checksum": "7c38754d1b7dbe3b74a3d4efff761bd815dd7eeb11c13350e8f54e35746c4d6b"
+  },
+  "vulhub-confluence-cve-2023-22527": {
+    "version": "1.0.0",
+    "checksum": "5afe5d28d2ca31fb8c9c7e4cae637ef54012e40827a1eb76cb11b2827b4aeb37"
+  },
+  "vulhub-couchdb-cve-2017-12636": {
+    "version": "1.0.0",
+    "checksum": "4928886bbc5d2e592215044a385b222b8b35f90aa6a19b502453444dd21a3dab"
+  },
+  "vulhub-couchdb-cve-2022-24706": {
+    "version": "1.0.0",
+    "checksum": "6e4a7bbc2f4cbc61b89dd6d0bbab511c281fa300004396b2d54c7b12bdf98b53"
+  },
+  "vulhub-craftcms-cve-2023-41892": {
+    "version": "1.0.0",
+    "checksum": "e4545ab42505ca8edf45e72ff70eadda579afc5d1526c1adaec4a73351fa56a9"
+  },
+  "vulhub-cups-browsed-cve-2024-47177": {
+    "version": "1.0.0",
+    "checksum": "57165024209def53a8899f0d87224a3112fdf25a055efcce6744e416b13d317b"
+  },
+  "vulhub-dataease-cve-2024-56511": {
+    "version": "1.0.0",
+    "checksum": "7d20004e6688a201cde3df975f947ff0ebb8a470a94bc964b67130bea619b550"
+  },
+  "vulhub-dataease-cve-2025-32966": {
+    "version": "1.0.0",
+    "checksum": "e05af6565db9cddf7ecc52b8212bcbe6dcc8cd4df9f55c51c7bdece8dc92097d"
+  },
+  "vulhub-dataease-cve-2025-49001": {
+    "version": "1.0.0",
+    "checksum": "8d273997d24d5bca6ed3cfcbcdbe91cd7b8e93b816693e033526e258ce1608e0"
+  },
+  "vulhub-discuz-wooyun-2010-080723": {
+    "version": "1.0.0",
+    "checksum": "9875aa98db59c8a883b50d9d0753227c4adef9498348c6c58ced75bd9b0c58dc"
+  },
+  "vulhub-discuz-x3-4-arbitrary-file-deletion": {
+    "version": "1.0.0",
+    "checksum": "ab91d14492551f5918c707c8de4996abe75eac9a1caed2afeac41ab535c645bf"
+  },
+  "vulhub-django-cve-2018-14574": {
+    "version": "1.0.0",
+    "checksum": "d9babb50f64c8505484567af5a0e802f15ea29bad7b871471bb9e36f390c3499"
+  },
+  "vulhub-drupal-cve-2014-3704": {
+    "version": "1.0.0",
+    "checksum": "29a2c07de1737fae41c02adb45527f84be06f07cc63fb073cbdf8171beed3afd"
+  },
+  "vulhub-drupal-cve-2017-6920": {
+    "version": "1.0.0",
+    "checksum": "901abc30333f3aa7992ca02e3949cbff759933a028b7d2c71668b5dbbe69f9de"
+  },
+  "vulhub-drupal-cve-2018-7600": {
+    "version": "1.0.0",
+    "checksum": "b41527ee76af0c9f84a3e1beba5609410fd09a05b9c3b55a7dcb156ff922321c"
+  },
+  "vulhub-drupal-cve-2018-7602": {
+    "version": "1.0.0",
+    "checksum": "f04710e601019e66bf10ac2df7655c1c2fcc9a9a50a5c397b2988ef414f94fbd"
+  },
+  "vulhub-drupal-cve-2019-6339": {
+    "version": "1.0.0",
+    "checksum": "1267a148df6f84ef7674b25d9601c1e1192e0f5b13082b7ff9a89a421efb347b"
+  },
+  "vulhub-drupal-cve-2019-6341": {
+    "version": "1.0.0",
+    "checksum": "63a4cdaa6e3805a12225eedc0c2b7527caa58e3502eba63fff0865325035b1ad"
+  },
+  "vulhub-ecshop-collection-list-sqli": {
+    "version": "1.0.0",
+    "checksum": "a6e95e6dd6bc339ac489665931145550858e6250bf21407ecc52bb34d9b5cbfd"
+  },
+  "vulhub-ecshop-xianzhi-2017-02-82239600": {
+    "version": "1.0.0",
+    "checksum": "872b8e3ecdf1f751584e2040bb9666566ae0dcb12231ca95818c6a4605577023"
+  },
+  "vulhub-elasticsearch-cve-2014-3120": {
+    "version": "1.0.0",
+    "checksum": "922cf9132b1ce1667e8ea983eb30583739f1e6d10d0a5581cf3f0b97477992c8"
+  },
+  "vulhub-elasticsearch-cve-2015-1427": {
+    "version": "1.0.0",
+    "checksum": "7f627e0758c86ac45a3c966fb9a00f96be77ad29fc795e7d87cba2c2c221d641"
+  },
+  "vulhub-elasticsearch-wooyun-2015-110216": {
+    "version": "1.0.0",
+    "checksum": "d3f106c332858c475698c7d8910bb8278f03a6c0c9328521b0db0fa422466bea"
+  },
+  "vulhub-elfinder-cve-2021-32682": {
+    "version": "1.0.0",
+    "checksum": "88628162e16dbdf2fa24bb6ef271feaef640bc2f0b07141d85063c1784b6f784"
+  },
+  "vulhub-erlang-cve-2025-32433": {
+    "version": "1.0.0",
+    "checksum": "fd178c8fc076d9acfd3f7afd772f2c035ae5deedec284c82ec29506c6ad3ab11"
+  },
+  "vulhub-fastjson-1-2-24-rce": {
+    "version": "1.0.0",
+    "checksum": "e3166abe3b2e6adea3d18227604d123113d84f62dc357cadd8aa5aaf511cd640"
+  },
+  "vulhub-fastjson-1-2-47-rce": {
+    "version": "1.0.0",
+    "checksum": "d249b80d57e016632b05f42f710b6251b18e490b8e6dc734732be10d9e2fb3e1"
+  },
+  "vulhub-fastjson-1-2-83-rce": {
+    "version": "1.0.0",
+    "checksum": "9e53862ceab3d640a9028acdcd33deb1325c1133b7be7e1485fe6c5653e228b0"
+  },
+  "vulhub-flink-cve-2020-17518": {
+    "version": "1.0.0",
+    "checksum": "8d873364eb2f17ca153a3c54e997e51b9674a030f0ea82d425f1b1e3d2a4f6bd"
+  },
+  "vulhub-flink-cve-2020-17519": {
+    "version": "1.0.0",
+    "checksum": "6e105a635a898e7a8444268e9ab85f7051e2736ca13dc79b48c8b0cf43dac723"
+  },
+  "vulhub-geoserver-cve-2021-40822": {
+    "version": "1.0.0",
+    "checksum": "0ff8773e8f28ff785e1a9e2bbecd2ee9de80b0169f6d2709a7da235004f60de3"
+  },
+  "vulhub-geoserver-cve-2022-24816": {
+    "version": "1.0.0",
+    "checksum": "920f71238643cffcfc17ab86f103f01de05ead940252ba8b8afc6b0965878c7f"
+  },
+  "vulhub-geoserver-cve-2024-36401": {
+    "version": "1.0.0",
+    "checksum": "5a091a71db1edb6be724b9eab8997c7d73eff970499c5504dc4ff7b4b52f6e08"
+  },
+  "vulhub-git-cve-2017-8386": {
+    "version": "1.0.0",
+    "checksum": "df51709643b90a6dbe19eb01b86aa8ee4119482eda0227dfd66337c09caf6b3b"
+  },
+  "vulhub-gitea-1-4-rce": {
+    "version": "1.0.0",
+    "checksum": "7bab84ee3bfcc9872df9a98b5fbfd0f1904eb5a9f8c13947c67f3e2c03e34a88"
+  },
+  "vulhub-glassfish-cve-2017-1000028": {
+    "version": "1.0.0",
+    "checksum": "e1d21dd87fec5e99d0ab82c38a6f795d5465596c23a47094928e3553e790c8e3"
+  },
+  "vulhub-gogs-cve-2018-18925": {
+    "version": "1.0.0",
+    "checksum": "9353936f1edc0bacb9ebe56cd4c9dfc190ec7cfcdb4e0dced1eb9a9d5f03ac3c"
+  },
+  "vulhub-gotenberg-cve-2026-40281": {
+    "version": "1.0.0",
+    "checksum": "19c4b35d783cbe8219c7ce063f6117d066f59b01fd6b231e74e7eb07a04ecc82"
+  },
+  "vulhub-gradio-cve-2023-51449": {
+    "version": "1.0.0",
+    "checksum": "293e1632f86d80338aa31333f9b0c41a080fc32cb4d30345dd20826dc9b1cb8b"
+  },
+  "vulhub-gradio-cve-2024-1561": {
+    "version": "1.0.0",
+    "checksum": "82f812bf52a2017c0ff8da9ffaa2bea8ff3e6715a5e1f8b6a5b78e169cdae381"
+  },
+  "vulhub-grafana-admin-ssrf": {
+    "version": "1.0.0",
+    "checksum": "2bc888ad6e9105655e84300f3d04f30d688088de3f6ef49ffdeac444078b1881"
+  },
+  "vulhub-grafana-cve-2021-43798": {
+    "version": "1.0.0",
+    "checksum": "b236cb5f1f73fb6d1ec4c4c92749a0abed017e086e57f875e221a2e02cebf008"
+  },
+  "vulhub-grafana-cve-2024-9264": {
+    "version": "1.0.0",
+    "checksum": "3a326f445f9abb6932d73f376e947c2e3646cd5560defb4651285294e8d44537"
+  },
+  "vulhub-h2database-cve-2018-10054": {
+    "version": "1.0.0",
+    "checksum": "3ff5293048fc6a3380aecf6927f2ddcb2bd70ba70111ce1f0a5dd2aac5a85867"
+  },
+  "vulhub-h2database-cve-2021-42392": {
+    "version": "1.0.0",
+    "checksum": "d5cb7256c772d573d4a3b69059be96f7a0d2223700e52f081691e78e8cd39a71"
+  },
+  "vulhub-h2database-cve-2022-23221": {
+    "version": "1.0.0",
+    "checksum": "28a2a947a7ead15ecd8a717e6c4cad1aa02d4bb4d07dc569762f647a816f55c8"
+  },
+  "vulhub-hadoop-unauthorized-yarn": {
+    "version": "1.0.0",
+    "checksum": "a328b81ad362b2754f6f7f703263882854db8d8675000a6879a69b88283ca8a8"
+  },
+  "vulhub-hertzbeat-cve-2024-42323": {
+    "version": "1.0.0",
+    "checksum": "45ec54c9dfc519dc87cd8d8a4e9bdd4b8334ad3cf424422dc52cb8936f0a0272"
+  },
+  "vulhub-hugegraph-cve-2024-27348": {
+    "version": "1.0.0",
+    "checksum": "e2155bc99b434625128507d22e78701df3ed674879f4ad5aa2e259b8696d3418"
+  },
+  "vulhub-hugegraph-cve-2024-43441": {
+    "version": "1.0.0",
+    "checksum": "abbf4e349435c0b73dcb907608495c6a0f894cfe1eb0a4e161edaf139fa68e78"
+  },
+  "vulhub-inetutils-cve-2026-24061": {
+    "version": "1.0.0",
+    "checksum": "62984def2b2af21c568c07a32732409db160f54cc4f797e0e2b5a9fff4310de5"
+  },
+  "vulhub-influxdb-cve-2019-20933": {
+    "version": "1.0.0",
+    "checksum": "b02d580c288d831ca908f144f0943d02afe17fb52cd082c5d99b39ddfbb23426"
+  },
+  "vulhub-jackson-cve-2017-7525": {
+    "version": "1.0.0",
+    "checksum": "44e0a0913bf2db54341f9e8db5ff15a605d5c56107206b40f39a06a963c5b3ec"
+  },
+  "vulhub-java-rmi-codebase": {
+    "version": "1.0.0",
+    "checksum": "4ee540f72aec3f524ea17a7d4db6fb89f333c947314d1fbd30b4cf189cdb43bb"
+  },
+  "vulhub-java-rmi-registry-bind-deserialization": {
+    "version": "1.0.0",
+    "checksum": "9ac8ccf79cf5c312e6791d9e1b30b63a91003b867414d7db26ee0efbf97960cc"
+  },
+  "vulhub-java-rmi-registry-bind-deserialization-bypass": {
+    "version": "1.0.0",
+    "checksum": "02a722ad76f68323681ab51dcdbef7bc5e99e000e386f6ebb88a6a71bd5e825a"
+  },
+  "vulhub-jboss-cve-2017-12149": {
+    "version": "1.0.0",
+    "checksum": "20734f2509f3f13fc352246863f663c74bda8b8dc02d0596165592f3e39d915c"
+  },
+  "vulhub-jboss-cve-2017-7504": {
+    "version": "1.0.0",
+    "checksum": "e7c77fe1249561179fccae1684e09e75c6186c1b9b3c3bad25c2f8231d1618e6"
+  },
+  "vulhub-jboss-jmxinvokerservlet-deserialization": {
+    "version": "1.0.0",
+    "checksum": "66ec7d93a517e8442784d738b1677ff35960a9ede3151ada577b691e18a8edab"
+  },
+  "vulhub-jenkins-cve-2017-1000353": {
+    "version": "1.0.0",
+    "checksum": "8dd1f2e793e5a969d40bb1c35996fa7b8d48d51c5cb5192401935b9213537ff0"
+  },
+  "vulhub-jenkins-cve-2018-1000861": {
+    "version": "1.0.0",
+    "checksum": "c10cd5cd4ea66d21638a5f5b41b9d689347214b7d20ea18078f619dba8ee9561"
+  },
+  "vulhub-jenkins-cve-2024-23897": {
+    "version": "1.0.0",
+    "checksum": "ebfd25c28b612a2d5cd0921d3017e4c0f7c296b0070345fbe81f80feb276e5d2"
+  },
+  "vulhub-jimureport-cve-2023-4450": {
+    "version": "1.0.0",
+    "checksum": "0b353c49a754986e355896dd752b37a242527d4c73d7a4a5de22e5c925e34c40"
+  },
+  "vulhub-jmeter-cve-2018-1297": {
+    "version": "1.0.0",
+    "checksum": "0579739ac27ede375056fe9ebf898137214b3692b7428c8dfde86c438faad8ce"
+  },
+  "vulhub-joomla-cve-2015-8562": {
+    "version": "1.0.0",
+    "checksum": "5170e222037fecbae3074fc1171210c43aeb826d2ecc27e8c5fa070e32909bd8"
+  },
+  "vulhub-joomla-cve-2017-8917": {
+    "version": "1.0.0",
+    "checksum": "0aa320700e576e8204a5ace47a5210df7c30517d1e2168c8372c1eec5d74d0bf"
+  },
+  "vulhub-joomla-cve-2023-23752": {
+    "version": "1.0.0",
+    "checksum": "46e39ca26d38fd2a1a48aa263e23d61c2f8e41fb22bea13c3bf5dd0158b8442a"
+  },
+  "vulhub-jupyter-notebook-rce": {
+    "version": "1.0.0",
+    "checksum": "2cc45ba2ac46258c1c9428cf9ab4d2b709c3e03455a202fb391afa33ae4cb87d"
+  },
+  "vulhub-kafka-cve-2023-25194": {
+    "version": "1.0.0",
+    "checksum": "e69477e83437ca5a65879f797ded9a4cd017aaf14fa791a9fd9459d31e0c65ef"
+  },
+  "vulhub-kibana-cve-2018-17246": {
+    "version": "1.0.0",
+    "checksum": "0a8d39e08e5cd68d040ba8c7040642cf154b8bb1b3d15c681318696f9d1ce825"
+  },
+  "vulhub-kibana-cve-2019-7609": {
+    "version": "1.0.0",
+    "checksum": "989d12b8fc32c3c26c19d2ef6b9d6293b212e3bae1feea86946932dd83887784"
+  },
+  "vulhub-kibana-cve-2020-7012": {
+    "version": "1.0.0",
+    "checksum": "c70c6ffd70d9b9f568c92082e41b413a6234c74fe0ed63b8950e909a8e4683bb"
+  },
+  "vulhub-kkfileview-4-3-zipslip-rce": {
+    "version": "1.0.0",
+    "checksum": "5880dca994d34568030092ad24474634f9734bad81c0352eb96ee0f0daebbb4d"
+  },
+  "vulhub-langflow-cve-2025-3248": {
+    "version": "1.0.0",
+    "checksum": "73b66d45fcad48a0e503b49e3b65310cd86e041b2fae971b4d70963f58daeb1a"
+  },
+  "vulhub-langflow-cve-2026-33017": {
+    "version": "1.0.0",
+    "checksum": "407a230cd481409a7bf4af45fc103291a8e72c2775e41cf6b66ecc4c0d95e040"
+  },
+  "vulhub-laravel-cve-2021-3129": {
+    "version": "1.0.0",
+    "checksum": "adec68dd170d2ba9c858c5962a9f8ee3e081be8cee944b603d41e22db1a846f4"
+  },
+  "vulhub-libssh-cve-2018-10933": {
+    "version": "1.0.0",
+    "checksum": "8fb0ca88beea631f55cc343b74e20be2dda69473eaeb8371d9e5c2ab6e4f4c75"
+  },
+  "vulhub-liferay-portal-cve-2020-7961": {
+    "version": "1.0.0",
+    "checksum": "4f0528cbf180382e976ca792619b00f9014d15efb6b526bac951126b50cdd07b"
+  },
+  "vulhub-linkis-cve-2022-44645": {
+    "version": "1.0.0",
+    "checksum": "1fb1c1bacd2ddeed40a00eb5b4ad16d0372478036eda025c84dff2d3c703bc9a"
+  },
+  "vulhub-livewire-cve-2025-54068": {
+    "version": "1.0.0",
+    "checksum": "7f8fe69e0dc0a07ad704c4b2cc819cf8445e20f988b5a7089d575fbe2b2ca5ad"
+  },
+  "vulhub-log4j-cve-2017-5645": {
+    "version": "1.0.0",
+    "checksum": "859d0e10ccf3813ce4a2ac1c808a1d1d89ea0b03d1f368bd47bf28416d8736f8"
+  },
+  "vulhub-log4j-cve-2021-44228": {
+    "version": "1.0.0",
+    "checksum": "b0a69977dbd2b70cc00550879c6a9fd2adba9d0cd4fb96cb86d05fdd1ff9e3a5"
+  },
+  "vulhub-magento-2-2-sqli": {
+    "version": "1.0.0",
+    "checksum": "375536ec63f8f5a1b7b518cded8fcb0189fce0f792bc7158074a669bb912f6b6"
+  },
+  "vulhub-metabase-cve-2021-41277": {
+    "version": "1.0.0",
+    "checksum": "dba509c10c34a36b9c36ba445b6f11de4c1167904480fd987a32a476715e1102"
+  },
+  "vulhub-metabase-cve-2023-38646": {
+    "version": "1.0.0",
+    "checksum": "41097ef3281c59d12260eee63b4c12fffc316d6ddecf82267ba414bb386b9ed0"
+  },
+  "vulhub-metersphere-cve-2021-45788": {
+    "version": "1.0.0",
+    "checksum": "f30d43d75477a4d93ec783cdc7f2550353ceacc612fce0caed6662d25ae7b351"
+  },
+  "vulhub-metersphere-plugin-rce": {
+    "version": "1.0.0",
+    "checksum": "e385553437a0aa7210e3b339580097e5c95dd7fa61abda7f92eb5ee0024ccfda"
+  },
+  "vulhub-mini-httpd-cve-2018-18778": {
+    "version": "1.0.0",
+    "checksum": "3b565e0d76f974ad32ea554772207aa68e1e87854f526b6084811459d57ee9b5"
+  },
+  "vulhub-mojarra-jsf-viewstate-deserialization": {
+    "version": "1.0.0",
+    "checksum": "85af9d48be8ebd9711abc8bf7da856672307fb33eae41c76c02bdeb80e421c92"
+  },
+  "vulhub-mysql-cve-2012-2122": {
+    "version": "1.0.0",
+    "checksum": "e4716de39730e6de6a0626df4ee7677285ed02a5b35835bc6610a9387366dc1f"
+  },
+  "vulhub-n8n-cve-2026-21858": {
+    "version": "1.0.0",
+    "checksum": "5f0952efa6a56b442bdb3f3249003a4322482c1e5ad41d2d06c549aeb8490187"
+  },
+  "vulhub-nacos-cve-2021-29441": {
+    "version": "1.0.0",
+    "checksum": "8daac72bad09c9bc78aaede994dd17f4451c74e00019842200fd4642c3664c84"
+  },
+  "vulhub-nacos-cve-2021-29442": {
+    "version": "1.0.0",
+    "checksum": "fb0a75031bbdbe86c1d1ed71dea6d78dc609101679a90f5af2860d8dc3cac15f"
+  },
+  "vulhub-next-js-cve-2025-29927": {
+    "version": "1.0.0",
+    "checksum": "0bfffa20030760675ab87d04208ca435cc61218a79e7c6db37e8b04c2369a2e8"
+  },
+  "vulhub-nexus-cve-2019-7238": {
+    "version": "1.0.0",
+    "checksum": "d41aa4709e6296290be59a92b84d973a7ed3c123d03e89e290016002a0e970a2"
+  },
+  "vulhub-nginx-ui-cve-2026-27944": {
+    "version": "1.0.0",
+    "checksum": "e74ba3fdb7f5db35ee5740f2e2303c80af8a1e61507b50632bcd85951b48a9c5"
+  },
+  "vulhub-ntopng-cve-2021-28073": {
+    "version": "1.0.0",
+    "checksum": "d01f2afe8320b1885537dd8855d1222d09c94846a0e9fae27ad040519139d7f4"
+  },
+  "vulhub-ofbiz-cve-2020-9496": {
+    "version": "1.0.0",
+    "checksum": "1c301baf19af30e845a10706c8f9c6979689260557936319d3ca5e78260d9830"
+  },
+  "vulhub-ofbiz-cve-2023-49070": {
+    "version": "1.0.0",
+    "checksum": "7cbd040d38449d8c724735ecbcf9f61080e3a114786d72c0012ec168a0b8a32e"
+  },
+  "vulhub-ofbiz-cve-2023-51467": {
+    "version": "1.0.0",
+    "checksum": "7947ec919fa7fad6d1c79434ba643a2de1a1f230e7474518c40af1d3c3a7d006"
+  },
+  "vulhub-ofbiz-cve-2024-38856": {
+    "version": "1.0.0",
+    "checksum": "57171702c2f46bf1ca8bcc3b680ddf832d967f25b08bc7e82e64c1fe4aa6251b"
+  },
+  "vulhub-ofbiz-cve-2024-45195": {
+    "version": "1.0.0",
+    "checksum": "cc3bac65bccbff1b8bc8d4a0f758f416ea57bc4d65adaabff1895ca1f1ca9fec"
+  },
+  "vulhub-ofbiz-cve-2024-45507": {
+    "version": "1.0.0",
+    "checksum": "feec20dd35f9ec84a6a0e91c35eda024460d9150d8c281e29d93e4512312e38b"
+  },
+  "vulhub-openclaw-cve-2026-25253": {
+    "version": "1.0.0",
+    "checksum": "f80ef35e6f8d6e65b1da8022587ff47d29e14b6db2db930432c540c1732190c0"
+  },
+  "vulhub-openfire-cve-2023-32315": {
+    "version": "1.0.0",
+    "checksum": "f76856b11c8ce34d58391e37b23d0f100da26066c2d8cb5f739abe73e10e0316"
+  },
+  "vulhub-opensmtpd-cve-2020-7247": {
+    "version": "1.0.0",
+    "checksum": "fc9f4eaff7bbeda1e1d794b20d5203cb8d01c6249838f5961f75aeba0fef6ef7"
+  },
+  "vulhub-openssl-cve-2022-0778": {
+    "version": "1.0.0",
+    "checksum": "f6485c3ab426aae8b58bb096e8df21a91616675459b8c8014894c5bc9aa4de4a"
+  },
+  "vulhub-opentsdb-cve-2020-35476": {
+    "version": "1.0.0",
+    "checksum": "8731b1a04e7fded2429aeae2b6c731c143395646a625db792e53c2a82b9b79f4"
+  },
+  "vulhub-opentsdb-cve-2023-25826": {
+    "version": "1.0.0",
+    "checksum": "fba436158c91dd0320f3b0021cd542ecaa55a4bf3c45607b0ef6fe51eedccfe8"
+  },
+  "vulhub-owncloud-cve-2023-49103": {
+    "version": "1.0.0",
+    "checksum": "7fef206a91f51483cc9b9a8d096be7d50a0298fa3628218d0f9b5ef399484c8e"
+  },
+  "vulhub-pgadmin-cve-2022-4223": {
+    "version": "1.0.0",
+    "checksum": "0ab3365bbed0b1a4e87446786c2ccf9ae58eb1050ad1c08a018db88c31873973"
+  },
+  "vulhub-pgadmin-cve-2023-5002": {
+    "version": "1.0.0",
+    "checksum": "3e2b02e78c46f79c8d3ec1e36d0378ab85b1ea675d0bd53154d6b197a36e0277"
+  },
+  "vulhub-pgadmin-cve-2025-13780": {
+    "version": "1.0.0",
+    "checksum": "517b029237abfb73617666a54430407e470a8a2db8a1d11d89ad51f9dbf62285"
+  },
+  "vulhub-pgadmin-cve-2025-2945": {
+    "version": "1.0.0",
+    "checksum": "acea3829942d5f4a6186968d06a35d15b8ae23cb77118313b7920beeaf6c392b"
+  },
+  "vulhub-php-fpm": {
+    "version": "1.0.0",
+    "checksum": "44a4b9085ad9e67e6af8aa12292c82cf57cd9ef73ddeba7a6334a9551fb7380d"
+  },
+  "vulhub-phpmyadmin-wooyun-2016-199433": {
+    "version": "1.0.0",
+    "checksum": "3c99ecdd3f51c6415a1133efef7590085649e05c741eacec09eea645253ec265"
+  },
+  "vulhub-phpunit-cve-2017-9841": {
+    "version": "1.0.0",
+    "checksum": "d55e8cb76219bf9dde79d2272532d9463d39a807b971ff7b4bfa62b051d1c5a3"
+  },
+  "vulhub-polkit-cve-2021-4034": {
+    "version": "1.0.0",
+    "checksum": "b92acee4d5d7607e18e7b5bf5c5f8a04df2069b54f94bad5eceb1fb5a50a2a2a"
+  },
+  "vulhub-postgres-cve-2019-9193": {
+    "version": "1.0.0",
+    "checksum": "f44a176e1ce785b14ff46bc6a6dda1dc6af2e814cdef3c0cf456aa8d9a01faa2"
+  },
+  "vulhub-python-cve-2024-23334": {
+    "version": "1.0.0",
+    "checksum": "cda92b89bcf0bf2fa4fae0994609114227d1cd6064580194d6db1eb7bbd8e501"
+  },
+  "vulhub-rails-cve-2018-3760": {
+    "version": "1.0.0",
+    "checksum": "dabdb9f5cbdeb301f904978e5b17d45c44206ed46a6d411a8865480f13038485"
+  },
+  "vulhub-react-cve-2025-55182": {
+    "version": "1.0.0",
+    "checksum": "e63a4df18406222d31f0acf4c57fb6f6d977953ab245b3bd8f05ff43bdf54e1f"
+  },
+  "vulhub-redis-4-unacc": {
+    "version": "1.0.0",
+    "checksum": "ede929648df252c57a34ce9507384ef7326ffef1339d9447815bd44d31075409"
+  },
+  "vulhub-redis-cve-2022-0543": {
+    "version": "1.0.0",
+    "checksum": "04f772209de006cd11e936d4be56d7f36fa214c0734b0e128be251e6e0997deb"
+  },
+  "vulhub-rocketchat-cve-2021-22911": {
+    "version": "1.0.0",
+    "checksum": "8031b27bbf2f7ff618eff6b87961057c7b99877c280ddba082fb8d42535976ec"
+  },
+  "vulhub-rocketmq-cve-2023-33246": {
+    "version": "1.0.0",
+    "checksum": "e65a437550fb83a594bbaccf853123cd43c4d609965ec2ffdb6b4b4b519f0369"
+  },
+  "vulhub-rocketmq-cve-2023-37582": {
+    "version": "1.0.0",
+    "checksum": "fc8e1e3e7d2fda52a5059eb5ee3ff779ceedf786be35d646e96f46815906d663"
+  },
+  "vulhub-saltstack-cve-2020-11651": {
+    "version": "1.0.0",
+    "checksum": "b13c8c9d81d441b03487dcf2e1caa5c9dd6ea9b22daaca8f97bee2292a2aaa5e"
+  },
+  "vulhub-saltstack-cve-2020-11652": {
+    "version": "1.0.0",
+    "checksum": "a49a9c9c62b229bcc4842dfaadd3b8808e8e2a3276c9d82ebefa7a6ee65a8f7a"
+  },
+  "vulhub-saltstack-cve-2020-16846": {
+    "version": "1.0.0",
+    "checksum": "a5cfccdbc667c7c6541458e149e7cb25099eea53da7b0c32e7c3677331aded99"
+  },
+  "vulhub-scrapy-scrapyd-unacc": {
+    "version": "1.0.0",
+    "checksum": "aa7f3291a5a802ba59fca638780953d6899eb90dec2551b06122d95027082c36"
+  },
+  "vulhub-shiro-cve-2010-3863": {
+    "version": "1.0.0",
+    "checksum": "5c05fb13d0453725707838d3794e77d5c230ab68f22c82d861be2122c7e501b4"
+  },
+  "vulhub-shiro-cve-2016-4437": {
+    "version": "1.0.0",
+    "checksum": "bfe40ad9e03b3781b2ad0b7f7e6303c810844b317b390d83d71a0c8888962d5e"
+  },
+  "vulhub-shiro-cve-2020-1957": {
+    "version": "1.0.0",
+    "checksum": "66aa5c6804b5e200b94c8c2b2f38982d9f8d022fba0e3be531f692e9d27452ae"
+  },
+  "vulhub-showdoc-3-2-5-sqli": {
+    "version": "1.0.0",
+    "checksum": "9198711d6361cce1876c0ddb6f8e2d73e6d54282a84353c53cd88c18ab4c946b"
+  },
+  "vulhub-showdoc-cnvd-2020-26585": {
+    "version": "1.0.0",
+    "checksum": "1f3eeee747b36a6ecaf553e8f885fc362b18a10d8da15e86dc28df13b2032312"
+  },
+  "vulhub-skywalking-8-3-0-sqli": {
+    "version": "1.0.0",
+    "checksum": "b228f1c73127c026954eecb80beaa045554d6da2e2c7512ef0966f45cd7e1a4c"
+  },
+  "vulhub-solr-cve-2017-12629-rce": {
+    "version": "1.0.0",
+    "checksum": "503e1e94c9907bc5fe75e9dcc20618467dae3dbeaf790f502b8869c91eb3d917"
+  },
+  "vulhub-solr-cve-2017-12629-xxe": {
+    "version": "1.0.0",
+    "checksum": "c94501163a4a5b1a4777cb0219f07dc294cf320b8e43fda62530dd88253dc5c0"
+  },
+  "vulhub-solr-cve-2019-0193": {
+    "version": "1.0.0",
+    "checksum": "9c76c58f2a64adbf133eb9f4fb5b7c3a8f7c76b26ea25730391d2e5dcdeaa565"
+  },
+  "vulhub-solr-cve-2019-17558": {
+    "version": "1.0.0",
+    "checksum": "7e7f2dd2170f3b548ae302853d20c06d88149f8a693d858664f7fdc4cc5946e7"
+  },
+  "vulhub-solr-remote-streaming-fileread": {
+    "version": "1.0.0",
+    "checksum": "1ce4861493921509a41a1af89fddaa7514039d974d76af0da2308dd7eff67059"
+  },
+  "vulhub-spark-unacc": {
+    "version": "1.0.0",
+    "checksum": "0106b869937580d2ffa2b1dc9012c6952ef81f23d80ef5b13b6a1d5e1156148a"
+  },
+  "vulhub-spring-cve-2016-4977": {
+    "version": "1.0.0",
+    "checksum": "8d01ce5a63ed7e82d394465ecb4b38dff077da335cba81becd8205196eb8934e"
+  },
+  "vulhub-spring-cve-2017-4971": {
+    "version": "1.0.0",
+    "checksum": "56c60819368c40ba9eb2c8148b94421cc85b44b8e65aade78fe4d79bb986628a"
+  },
+  "vulhub-spring-cve-2017-8046": {
+    "version": "1.0.0",
+    "checksum": "17ac3dc8cdcae160d4b70a778770ebf0596d9d0ffa0b21b7f5b58389cd301e5c"
+  },
+  "vulhub-spring-cve-2018-1270": {
+    "version": "1.0.0",
+    "checksum": "0134900d7c2486969a43fffe3a2366bfad7feae64e7f3ba0f516dca0a9a0e241"
+  },
+  "vulhub-spring-cve-2018-1273": {
+    "version": "1.0.0",
+    "checksum": "39f1343bcac8f2a666f654bd0975e6a8b7662773859a6e0ab611807d52186d37"
+  },
+  "vulhub-spring-cve-2022-22947": {
+    "version": "1.0.0",
+    "checksum": "f71026b5a9d4b82d44f313e1614aeef93450c1cd72a212d427608db5d665cf17"
+  },
+  "vulhub-spring-cve-2022-22963": {
+    "version": "1.0.0",
+    "checksum": "d2db8ac6a9d62a8310246d52ace26ee8b95638b365832a91592733cf8ca8b771"
+  },
+  "vulhub-spring-cve-2022-22965": {
+    "version": "1.0.0",
+    "checksum": "8890bbf26e741678957eea761d36bc2ce95e20e1bac6d58537edc346e0b0b07b"
+  },
+  "vulhub-spring-cve-2022-22978": {
+    "version": "1.0.0",
+    "checksum": "dde571f4a4f3a7e1e5601777ae286bb96737083e7eb4dea09211667879af82e5"
+  },
+  "vulhub-spring-cve-2025-41242": {
+    "version": "1.0.0",
+    "checksum": "4be3d70367414c9c81b0bc03f857c59366e93ac72acc297838561afa9cbfee48"
+  },
+  "vulhub-struts2-s2-032": {
+    "version": "1.0.0",
+    "checksum": "e0276262c794d7d8ce4347acdf1935f1aa6ba2c04d3dfff7051fcf91d1c15567"
+  },
+  "vulhub-struts2-s2-045": {
+    "version": "1.0.0",
+    "checksum": "40cd16273eb0766b072c1cb7b3be719da9253df6df588cb46fae0c9603462b29"
+  },
+  "vulhub-struts2-s2-046": {
+    "version": "1.0.0",
+    "checksum": "8b1d1340a6cda0fe2ae7bd0f4647fa17dfabef0bb29a092f9c581903151567a4"
+  },
+  "vulhub-struts2-s2-048": {
+    "version": "1.0.0",
+    "checksum": "7a2f90df68bbc70fbda4e925f015f29a61b4079aad526075856e04701cb0795d"
+  },
+  "vulhub-struts2-s2-052": {
+    "version": "1.0.0",
+    "checksum": "8d85d13575fd10269c3a659575b2f938b9bf1da32b0d2ef6d037fc3f10208d48"
+  },
+  "vulhub-struts2-s2-053": {
+    "version": "1.0.0",
+    "checksum": "6641d2828f8c968ae67cbe13407f71cba4fc57ba400f9be4bdb63b9b546a23d1"
+  },
+  "vulhub-struts2-s2-059": {
+    "version": "1.0.0",
+    "checksum": "6fb246f17f6c3a653d05c8158da38d1158c66c27db199365b92bd5f7c0a10d91"
+  },
+  "vulhub-struts2-s2-061": {
+    "version": "1.0.0",
+    "checksum": "4a28d9b825ebf255ea4f250c05ac8fd0c44ec7464d7d84a468740e0c85e1004d"
+  },
+  "vulhub-struts2-s2-066": {
+    "version": "1.0.0",
+    "checksum": "840caca2379e2a86b4401a20e4ded2ceefbe9fd565459edd3d6b743bf99883b6"
+  },
+  "vulhub-struts2-s2-067": {
+    "version": "1.0.0",
+    "checksum": "65ba0bd7c6e503c0d7e69a5255731ec6a7d9dfd3cace28db1972412489eaf9ee"
+  },
+  "vulhub-superset-cve-2023-27524": {
+    "version": "1.0.0",
+    "checksum": "20912c251e4e32c75fbc39a4969f532dd6b6ccd21c7d1ee99aae281afa9ad080"
+  },
+  "vulhub-superset-cve-2023-37941": {
+    "version": "1.0.0",
+    "checksum": "7c65e6832c02b697e3cf30d4d0802118aac946d794a140293322d18fb5e01003"
+  },
+  "vulhub-supervisor-cve-2017-11610": {
+    "version": "1.0.0",
+    "checksum": "fb0cf26ad8482588a18e90d7ad9ec5082749bf3351d03fff109ec455a778e0ec"
+  },
+  "vulhub-teamcity-cve-2023-42793": {
+    "version": "1.0.0",
+    "checksum": "d6f92447d52a132d6de3db18841dff31f838674c0c8dc5f2dff98a55cd2d360d"
+  },
+  "vulhub-teamcity-cve-2024-27198": {
+    "version": "1.0.0",
+    "checksum": "78d94fdd50f13c8b8e60d69a8d9bda38d6e965838f604f7e2f948d1f675de588"
+  },
+  "vulhub-thinkphp-2-rce": {
+    "version": "1.0.0",
+    "checksum": "bedc866d7aba39fba691abdd506a0ca1a13b0f04ae02dee46faed48d8b7e72f8"
+  },
+  "vulhub-thinkphp-5-0-23-rce": {
+    "version": "1.0.0",
+    "checksum": "7f5eb8fc8e67d301349638947bc518e98930978a26911340cfe983d0bc34bf6f"
+  },
+  "vulhub-thinkphp-5-rce": {
+    "version": "1.0.0",
+    "checksum": "fb17876f4406f88981cb2313a8cd5089023f292c64421eca84ccc659187cc7a2"
+  },
+  "vulhub-thinkphp-lang-rce": {
+    "version": "1.0.0",
+    "checksum": "11aed141dd464d5ec3098bf9f70a1584214405678d5bbfcdfb3ee9c79222cebe"
+  },
+  "vulhub-tomcat-cve-2020-1938": {
+    "version": "1.0.0",
+    "checksum": "82a167e365d344c01dfa0858be61e300f074f06377b8cf8c87745f33d25fc9f3"
+  },
+  "vulhub-tomcat-cve-2026-34486": {
+    "version": "1.0.0",
+    "checksum": "07ef2fcacbf29f2f53aa12ad48f55466fc94adbca6db6df21e3baecf42f20a84"
+  },
+  "vulhub-uwsgi-cve-2018-7490": {
+    "version": "1.0.0",
+    "checksum": "7a88db8bc659c7acfe713cc3616da588b1d4ab534c3afac1bf613a55203517a8"
+  },
+  "vulhub-vite-cnvd-2022-44615": {
+    "version": "1.0.0",
+    "checksum": "b4a1e9bf76b4d501167c6b4f5010e714b30b22e87e8b32e4c0ee4df371558b74"
+  },
+  "vulhub-vite-cve-2025-30208": {
+    "version": "1.0.0",
+    "checksum": "b07ee2e00db955cae2b607d84e7bdea878b204843c49f0cac5e7c12203433afb"
+  },
+  "vulhub-vite-cve-2025-32395": {
+    "version": "1.0.0",
+    "checksum": "e27212a7a533a7a191a5620be76cc67e72c2e93470830dcd9b360defe7e538d9"
+  },
+  "vulhub-vite-cve-2026-39363": {
+    "version": "1.0.0",
+    "checksum": "ad817cfaf38670b255e19c1bee3ef1b867dea797cd311763560f65eb04b078fb"
+  },
+  "vulhub-weblogic-cve-2017-10271": {
+    "version": "1.0.0",
+    "checksum": "450c5f266cf818e66dd0b56761a965df8d44061c672597039b8f371819bd8cad"
+  },
+  "vulhub-weblogic-cve-2018-2628": {
+    "version": "1.0.0",
+    "checksum": "67a8f87d7aad67fa9515140e3136ff20bcf93f44ee16d7964748e62c0ee7e9c9"
+  },
+  "vulhub-weblogic-cve-2018-2894": {
+    "version": "1.0.0",
+    "checksum": "65f772bc9f847828a48b8a468d841106b9bdc71122c247eb2f25d6d01f91bb9b"
+  },
+  "vulhub-weblogic-cve-2020-14882": {
+    "version": "1.0.0",
+    "checksum": "d81180b9310be1ee4caaf38768381412c856cf0d59025651e2b8811d45de7cdb"
+  },
+  "vulhub-weblogic-cve-2023-21839": {
+    "version": "1.0.0",
+    "checksum": "06b885755edca379640dcd417ea59f12afd7e30b229e175ee21b867ecad7483d"
+  },
+  "vulhub-weblogic-ssrf": {
+    "version": "1.0.0",
+    "checksum": "97de003abd7e64f6e02142cda0825a46c52546a5f8ebf4cac51f2c3dd75d79b0"
+  },
+  "vulhub-webmin-cve-2019-15107": {
+    "version": "1.0.0",
+    "checksum": "357988e30c303f4c8f3e0fbc9cb6555f973e5bae9f08d64fce0705e546855a8b"
+  },
+  "vulhub-wordpress-cve-2026-63030": {
+    "version": "1.0.0",
+    "checksum": "ec7f540a11825d7f6f95571d6b969760b3b80830ff13160761db36cda04ad00f"
+  },
+  "vulhub-wordpress-pwnscriptum": {
+    "version": "1.0.0",
+    "checksum": "1287ff620c051397313b27f0c69581a30446c1c158d56b593eb1e0da62ecb027"
+  },
+  "vulhub-xstream-cve-2021-21351": {
+    "version": "1.0.0",
+    "checksum": "459fb4b87d925ce6cf0a85ad59020cec6010e5c000a0569e15218f1ce57dc267"
+  },
+  "vulhub-xstream-cve-2021-29505": {
+    "version": "1.0.0",
+    "checksum": "f972568a21625f3894e78b5d7b50e8be53b34111a02491f85b80de67b2c12611"
+  },
+  "vulhub-xxl-job-unacc": {
+    "version": "1.0.0",
+    "checksum": "35a426beb1bdb48159fe77d7220e6ec805d62e43265eb43cabddb458bd7dcce8"
+  },
+  "webgoat": {
+    "version": "1.1.0",
+    "checksum": "b9915813541ab3cdb769e0dbdd24f23b35cd458be081b9863ae07095930c397f"
   },
   "wireguard": {
     "version": "2.4.0",

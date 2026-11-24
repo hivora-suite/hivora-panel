@@ -1,0 +1,105 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: webgoat
+  name: OWASP WebGoat
+  version: 1.1.0
+  category: security-lab
+  tags: [owasp, web, java, lessons]
+  icon: { url: "https://raw.githubusercontent.com/WebGoat/WebGoat/main/docs/img/webgoat_logo_small.png" }
+  description:
+    fr: Application d'apprentissage volontairement vulnérable d'OWASP, en leçons guidées. Cible d'entraînement, à isoler.
+    en: OWASP's deliberately insecure teaching app, as guided lessons. A training target — keep it isolated.
+  links:
+    site: https://owasp.org/www-project-webgoat/
+    doc: https://github.com/WebGoat/WebGoat
+  maintainer: hivora
+  license: GPL-2.0 (image)
+  source: https://hub.docker.com/r/webgoat/webgoat
+  lab:
+    phase: exploitation
+    os: [linux]
+    tech: [web, java]
+    difficulty: easy
+    summary:
+      fr: Leçons guidées (injections SQL, XSS, désérialisation, contrôle d'accès…) avec explications intégrées — idéal pour débuter.
+      en: Guided lessons (SQL injection, XSS, deserialization, access control…) with built-in explanations — ideal to start.
+    solution:
+      fr: |
+        # Préparation
+        Adresse : IP:port affichés par le panel, ou l'IP du lab sur le port 8080 via le VPN labo. WebGoat s'ouvre sur /WebGoat.
+        $ export T=http://<ip>:<port>/WebGoat
+        Créer un compte à la première visite. Chaque leçon décrit son objectif et valide l'exploitation elle-même.
+        # 1. Reconnaissance
+        WebGoat est un parcours de leçons guidées : la navigation de gauche est la carte des familles de failles (A1 Injection, A3 XSS, contrôle d'accès, désérialisation…).
+        $ nmap -sV <ip>
+        # 2. Injection
+        Objectif : fausser une requête SQL à partir d'un champ. Exemple dans un champ de recherche d'une leçon « SQL Injection » :
+        $ ' OR '1'='1
+        La leçon montre la requête construite et confirme la réussite.
+        # 3. Cross-Site Scripting
+        Objectif : faire exécuter du script. Suivre la leçon « Cross-Site Scripting » et injecter une charge simple dans le champ indiqué :
+        $ <script>alert(1)</script>
+        # 4. Contrôle d'accès cassé
+        Objectif : atteindre une fonction ou une donnée hors de ses droits (IDOR, élévation). Les leçons « Access Control » guident pas à pas.
+        # 5. WebWolf (attaquant externe)
+        Certaines leçons simulent un attaquant extérieur (réception d'e-mails, de jetons) via WebWolf, servi sur un port voisin.
+        # 6. Remédiation (débriefing)
+        Chaque leçon se termine par les contre-mesures : requêtes paramétrées, encodage de sortie + CSP, contrôle d'accès vérifié côté serveur, désérialisation sûre. C'est le cœur pédagogique de WebGoat.
+        # 7. Remise à zéro
+        Redémarrer le lab remet la progression à zéro (comptes et avancement en mémoire).
+        Commencer par « (A1) Injection » puis « (A7) Cross-Site Scripting ».
+      en: |
+        # Setup
+        Address: the IP:port shown by the panel, or the lab's IP on port 8080 through the labs VPN. WebGoat opens at /WebGoat.
+        $ export T=http://<ip>:<port>/WebGoat
+        Create an account on first visit. Each lesson states its goal and verifies the exploit itself.
+        # 1. Reconnaissance
+        WebGoat is a guided lesson path: the left navigation is the map of vulnerability families (A1 Injection, A3 XSS, access control, deserialization…).
+        $ nmap -sV <ip>
+        # 2. Injection
+        Goal: bend a SQL query from a field. Example in a search field of a "SQL Injection" lesson:
+        $ ' OR '1'='1
+        The lesson shows the built query and confirms success.
+        # 3. Cross-Site Scripting
+        Goal: get script to run. Follow the "Cross-Site Scripting" lesson and inject a simple payload in the named field:
+        $ <script>alert(1)</script>
+        # 4. Broken access control
+        Goal: reach a function or data outside your rights (IDOR, privilege escalation). The "Access Control" lessons walk through it step by step.
+        # 5. WebWolf (external attacker)
+        Some lessons simulate an outside attacker (receiving e-mails, tokens) via WebWolf, served on a neighbouring port.
+        # 6. Remediation (debrief)
+        Each lesson ends with the countermeasures: parameterised queries, output encoding + CSP, server-side access checks, safe deserialization. This is WebGoat's teaching core.
+        # 7. Reset
+        Restarting the lab clears progress (accounts and advancement are in memory).
+        Start with "(A1) Injection" then "(A7) Cross-Site Scripting".
+requirements:
+  arch: [amd64, arm64]
+  memory: { min: 512Mi, recommended: 1Gi }
+  disk: { min: 500Mi }
+form:
+  basic:
+    - id: web_port
+      group: { fr: Accès, en: Access }
+      label: { fr: Port web, en: Web port }
+      type: port
+      default: 8080
+      help:
+        fr: "Ouvre WebGoat sur /WebGoat. Le compte s'y crée à la première visite."
+        en: "Opens WebGoat at /WebGoat. The account is created there on first visit."
+services:
+  server:
+    role: main
+    image: webgoat/webgoat
+    tag: "v2023.8@sha256:01672eb9aeba60d042ae1131d6de683b98fa64e9da60fa5d3daad2642a6795dd"
+    env:
+      TZ: "{{ host.timezone }}"
+      WEBGOAT_HOST: "0.0.0.0"
+      WEBGOAT_PORT: "8080"
+      WEBWOLF_HOST: "0.0.0.0"
+    ports:
+      - { container: 8080, host: "{{ form.web_port }}", purpose: web, exposure: lan }
+access:
+  web: "http://{{ host.lan_ip }}:{{ form.web_port }}/WebGoat"
+update:
+  strategy: manual

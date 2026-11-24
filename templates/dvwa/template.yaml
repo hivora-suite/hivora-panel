@@ -1,0 +1,114 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: dvwa
+  name: DVWA
+  version: 1.1.0
+  category: security-lab
+  tags: [web, php, mysql, classic]
+  icon: { url: "https://raw.githubusercontent.com/digininja/DVWA/master/dvwa/images/logo.png" }
+  description:
+    fr: Damn Vulnerable Web Application — la cible PHP/MySQL classique, à niveaux de sécurité réglables. Image autonome. À isoler.
+    en: Damn Vulnerable Web Application — the classic PHP/MySQL target with adjustable security levels. Self-contained image. Keep it isolated.
+  links:
+    site: https://github.com/digininja/DVWA
+    doc: https://github.com/digininja/DVWA#readme
+  maintainer: hivora
+  license: GPL-3.0 (image)
+  source: https://hub.docker.com/r/vulnerables/web-dvwa
+  lab:
+    phase: exploitation
+    os: [linux]
+    tech: [web, php, database]
+    difficulty: easy
+    summary:
+      fr: Terrain d'entraînement PHP/MySQL avec niveaux Low/Medium/High/Impossible pour comparer une faille et sa correction.
+      en: A PHP/MySQL playground with Low/Medium/High/Impossible levels to compare a flaw and its fix.
+    solution:
+      fr: |
+        # Préparation
+        Adresse : IP:port affichés par le panel, ou l'IP du lab sur le port 80 via le VPN labo.
+        $ export T=http://<ip>:<port>
+        Se connecter avec admin / password, puis cliquer « Create / Reset Database ».
+        Régler « DVWA Security » (menu de gauche) : on commence en Low, puis on rejoue en Medium et High pour comparer les protections.
+        # 1. Reconnaissance
+        Identifier le service et la pile (PHP/MySQL).
+        $ nmap -sV <ip>
+        Les vulnérabilités sont listées dans le menu de gauche (SQL Injection, Command Injection, XSS, File Inclusion, Upload…).
+        # 2. Injection SQL
+        Objectif : extraire des données via le champ « User ID ». En niveau Low :
+        $ 1' OR '1'='1
+        Version automatisée (depuis une autre machine du labo) :
+        $ sqlmap -u "$T/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=<sid>; security=low" --batch --dbs
+        # 3. Injection de commande
+        Objectif : exécuter une commande système via le champ « Ping » :
+        $ 127.0.0.1; id
+        # 4. Cross-Site Scripting
+        Objectif : exécuter du script. Dans un champ XSS (Reflected ou Stored) :
+        $ <script>alert(1)</script>
+        # 5. Inclusion de fichier / upload
+        Objectif : lire un fichier hors contexte (File Inclusion) ou déposer un fichier interprété (File Upload) — à étudier via les pages dédiées.
+        # 6. Comparaison des niveaux
+        Rejouer chaque faille en Low, Medium puis High : le code source de chaque page (bouton « View Source ») montre la correction appliquée à chaque niveau. C'est le cœur pédagogique de DVWA.
+        # 7. Remédiation (débriefing)
+        SQL : requêtes paramétrées. Commande : pas d'appel shell avec entrée utilisateur, listes blanches. XSS : encodage de sortie + CSP. Inclusion/upload : chemins et types validés, pas d'exécution dans le dossier d'upload.
+        # 8. Remise à zéro
+        « Create / Reset Database » (ou redémarrer le lab) remet la cible à son état initial.
+        Référence : github.com/digininja/DVWA
+      en: |
+        # Setup
+        Address: the IP:port shown by the panel, or the lab's IP on port 80 through the labs VPN.
+        $ export T=http://<ip>:<port>
+        Log in with admin / password, then click "Create / Reset Database".
+        Set "DVWA Security" (left menu): start on Low, then replay on Medium and High to compare the protections.
+        # 1. Reconnaissance
+        Identify the service and the stack (PHP/MySQL).
+        $ nmap -sV <ip>
+        The vulnerabilities are listed in the left menu (SQL Injection, Command Injection, XSS, File Inclusion, Upload…).
+        # 2. SQL injection
+        Goal: extract data through the "User ID" field. On Low level:
+        $ 1' OR '1'='1
+        Automated version (from another lab machine):
+        $ sqlmap -u "$T/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=<sid>; security=low" --batch --dbs
+        # 3. Command injection
+        Goal: run a system command through the "Ping" field:
+        $ 127.0.0.1; id
+        # 4. Cross-Site Scripting
+        Goal: run script. In an XSS field (Reflected or Stored):
+        $ <script>alert(1)</script>
+        # 5. File inclusion / upload
+        Goal: read a file out of context (File Inclusion) or drop an interpreted file (File Upload) — study them on the dedicated pages.
+        # 6. Comparing the levels
+        Replay each flaw on Low, Medium then High: each page's source ("View Source" button) shows the fix applied at each level. This is DVWA's teaching core.
+        # 7. Remediation (debrief)
+        SQL: parameterised queries. Command: no shell call with user input, allow-lists. XSS: output encoding + CSP. Inclusion/upload: validated paths and types, no execution in the upload folder.
+        # 8. Reset
+        "Create / Reset Database" (or restart the lab) returns the target to its initial state.
+        Reference: github.com/digininja/DVWA
+requirements:
+  arch: [amd64]
+  memory: { min: 256Mi, recommended: 512Mi }
+  disk: { min: 400Mi }
+form:
+  basic:
+    - id: web_port
+      group: { fr: Accès, en: Access }
+      label: { fr: Port web, en: Web port }
+      type: port
+      default: 8081
+      help:
+        fr: "Ouvre DVWA. Identifiants par défaut : admin / password, puis « Create / Reset Database »."
+        en: "Opens DVWA. Default credentials: admin / password, then 'Create / Reset Database'."
+services:
+  server:
+    role: main
+    image: vulnerables/web-dvwa
+    tag: "latest@sha256:dae203fe11646a86937bf04db0079adef295f426da68a92b40e3b181f337daa7"
+    env:
+      TZ: "{{ host.timezone }}"
+    ports:
+      - { container: 80, host: "{{ form.web_port }}", purpose: web, exposure: lan }
+access:
+  web: "http://{{ host.lan_ip }}:{{ form.web_port }}"
+update:
+  strategy: manual

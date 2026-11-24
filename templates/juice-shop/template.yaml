@@ -1,0 +1,141 @@
+apiVersion: hivora/v1
+kind: Template
+metadata:
+  slug: juice-shop
+  name: OWASP Juice Shop
+  version: 1.1.0
+  category: security-lab
+  tags: [owasp, web, nodejs, ctf]
+  icon: { url: "https://raw.githubusercontent.com/juice-shop/juice-shop/master/frontend/src/assets/public/images/JuiceShop_Logo.png" }
+  description:
+    fr: Boutique web volontairement vulnérable d'OWASP, truffée de failles à exploiter façon CTF. Cible d'entraînement, à isoler.
+    en: OWASP's deliberately insecure web shop, riddled with CTF-style flaws to exploit. A training target — keep it isolated.
+  links:
+    site: https://owasp.org/www-project-juice-shop/
+    doc: https://pwning.owasp-juice.shop/
+  maintainer: hivora
+  license: MIT (image)
+  source: https://hub.docker.com/r/bkimminich/juice-shop
+  lab:
+    phase: actions
+    os: [linux]
+    tech: [web, nodejs, api]
+    difficulty: medium
+    summary:
+      fr: Application cible moderne (Angular/Node) pour s'exercer à atteindre des objectifs — vol de données, contournement d'accès, injection.
+      en: A modern target app (Angular/Node) to practise reaching objectives — data theft, access bypass, injection.
+    solution:
+      fr: |
+        # Préparation
+        Adresse de la cible : celle affichée par le panel (IP:port), ou l'IP du lab sur le port 3000 via le VPN labo.
+        $ export T=http://<ip>:<port>
+        Mode au déploiement : « Entraînement » (défaut) suffit ; « Tous les défis » active aussi XXE/RCE.
+        Outils : navigateur, un proxy d'interception (Burp/ZAP), curl, sqlmap, john.
+        L'application enregistre la progression et affiche une bannière verte à chaque défi résolu.
+        # 1. Reconnaissance
+        Identifier les services et la pile technique.
+        $ nmap -sV <ip>
+        Ouvrir le tableau de score des défis, qui liste tout : /#/score-board
+        Repérer les points d'entrée exposés : /ftp, /api-docs, /rest, /metrics.
+        # 2. Injection SQL (authentification)
+        Objectif : se connecter sans identifiant valide. La requête de login concatène l'e-mail.
+        Dans le champ e-mail de /#/login (mot de passe quelconque) :
+        $ ' OR 1=1--
+        On est connecté sur le premier compte (admin). Une variante UNION exfiltre la table Users ; cassage des empreintes avec john.
+        # 3. Cross-Site Scripting (XSS)
+        Objectif : exécuter du script côté client. Dans la barre de recherche :
+        $ <iframe src="javascript:alert(`xss`)">
+        Comparer DOM / réfléchi / stocké selon le champ utilisé.
+        # 4. Contrôle d'accès cassé (IDOR)
+        Objectif : accéder à la ressource d'un autre utilisateur. Après connexion, rejouer une requête API en changeant l'identifiant :
+        $ curl -H "Authorization: Bearer <jeton>" $T/rest/basket/2
+        # 5. Authentification et jetons JWT
+        Décoder le contenu du jeton et étudier le défi « Unsigned JWT » (acceptation de alg=none).
+        $ echo '<jeton>' | cut -d. -f2 | base64 -d
+        # 6. Exploitation avancée (mode « Tous les défis »)
+        Les défis dangereux (XXE via l'upload de « Complain », SSTI, désérialisation) deviennent actifs : terrain pour s'exercer à la lecture de fichiers et à l'exécution de code en milieu isolé.
+        # 7. Remédiation (débriefing)
+        Injection : requêtes paramétrées, jamais de concaténation.
+        XSS : encodage à l'affichage + en-tête CSP ; sous Angular, pas de bypassSecurityTrust.
+        IDOR : vérifier côté serveur que la ressource appartient au porteur du jeton.
+        JWT : refuser alg=none, signer et vérifier (RS256). Ne rien exposer sans authentification (/ftp, /metrics).
+        # 8. Remise à zéro
+        Redémarrer le lab (fiche de l'app → Redémarrer) : la base repart vide, les défis sont réinitialisés.
+        Référence complète : pwning.owasp-juice.shop
+      en: |
+        # Setup
+        Target address: the one shown by the panel (IP:port), or the lab's IP on port 3000 through the labs VPN.
+        $ export T=http://<ip>:<port>
+        Deploy mode: "Training" (default) is enough; "All challenges" also enables XXE/RCE.
+        Tools: a browser, an intercepting proxy (Burp/ZAP), curl, sqlmap, john.
+        The app records progress and shows a green banner for each solved challenge.
+        # 1. Reconnaissance
+        Identify the services and the stack.
+        $ nmap -sV <ip>
+        Open the challenge score board, which lists everything: /#/score-board
+        Spot the exposed entry points: /ftp, /api-docs, /rest, /metrics.
+        # 2. SQL injection (authentication)
+        Goal: log in without valid credentials. The login query concatenates the e-mail.
+        In the e-mail field of /#/login (any password):
+        $ ' OR 1=1--
+        You are logged in as the first account (admin). A UNION variant exfiltrates the Users table; crack the hashes with john.
+        # 3. Cross-Site Scripting (XSS)
+        Goal: run script on the client. In the search bar:
+        $ <iframe src="javascript:alert(`xss`)">
+        Compare DOM / reflected / stored depending on the field used.
+        # 4. Broken access control (IDOR)
+        Goal: reach another user's resource. After login, replay an API request with a changed id:
+        $ curl -H "Authorization: Bearer <token>" $T/rest/basket/2
+        # 5. Authentication and JWT tokens
+        Decode the token payload and study the "Unsigned JWT" challenge (accepting alg=none).
+        $ echo '<token>' | cut -d. -f2 | base64 -d
+        # 6. Advanced exploitation ("All challenges" mode)
+        The dangerous challenges (XXE via the "Complain" upload, SSTI, deserialization) become active: a place to practise file reads and code execution in an isolated environment.
+        # 7. Remediation (debrief)
+        Injection: parameterised queries, never concatenation.
+        XSS: output encoding + a CSP header; under Angular, no bypassSecurityTrust.
+        IDOR: check server-side that the resource belongs to the token's holder.
+        JWT: refuse alg=none, sign and verify (RS256). Expose nothing without authentication (/ftp, /metrics).
+        # 8. Reset
+        Restart the lab (app page -> Restart): the database starts empty, challenges are reset.
+        Full reference: pwning.owasp-juice.shop
+requirements:
+  arch: [amd64, arm64]
+  memory: { min: 256Mi, recommended: 512Mi }
+  disk: { min: 400Mi }
+form:
+  basic:
+    - id: web_port
+      group: { fr: Accès, en: Access }
+      label: { fr: Port web, en: Web port }
+      type: port
+      default: 3000
+      help:
+        fr: "Ouvre la boutique cible. Le tableau de score des défis est sur /#/score-board."
+        en: "Opens the target shop. The challenge score board is at /#/score-board."
+  advanced:
+    - id: mode
+      group: { fr: Difficulté, en: Difficulty }
+      label: { fr: Jeu de défis, en: Challenge set }
+      type: select
+      default: default
+      options:
+        - { value: default, label: { fr: "Entraînement (sûr)", en: "Training (safe)" } }
+        - { value: unsafe, label: { fr: "Tous les défis (XXE, RCE…)", en: "All challenges (XXE, RCE…)" } }
+      help:
+        fr: "« Tous les défis » active les épreuves dangereuses (lecture de fichiers, exécution de code). À n'utiliser qu'en environnement isolé."
+        en: "'All challenges' enables the dangerous ones (file reads, code execution). Use only in an isolated environment."
+services:
+  server:
+    role: main
+    image: bkimminich/juice-shop
+    tag: "v17.1.0@sha256:57170ba190744b9e22469d9ab5934946cd3e53e2e66b12e4c0c1019e1bea7a6b"
+    env:
+      TZ: "{{ host.timezone }}"
+      NODE_ENV: "{{ form.mode }}"
+    ports:
+      - { container: 3000, host: "{{ form.web_port }}", purpose: web, exposure: lan }
+access:
+  web: "http://{{ host.lan_ip }}:{{ form.web_port }}"
+update:
+  strategy: manual

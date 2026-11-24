@@ -26,7 +26,7 @@ from hivora.state import StateStore
 from hivora.templates import Catalog
 from hivora.templates.icons import IconCache
 from hivora.topology.models import TopologyEdge, TopologyLayout, TopologyNode
-from hivora.zones import NetworkMode, Zone
+from hivora.zones import LABS_ZONE, NetworkMode, Zone
 
 INTERNET = "internet"
 FIREWALL = "firewall"
@@ -69,7 +69,12 @@ class GraphBuilder:
         graph = Graph(host=host)
         async with self.sessions() as session:
             zones = list(await session.scalars(select(Zone).order_by(Zone.sort_order, Zone.name)))
+            # Security labs live apart: their zone and their apps never appear in the topology.
+            labs_zone_id = next((z.id for z in zones if z.slug == LABS_ZONE), None)
             with_template = await apps_with_template(session)  # by name
+            if labs_zone_id is not None:
+                zones = [z for z in zones if z.id != labs_zone_id]
+                with_template = [(a, s) for a, s in with_template if a.zone_id != labs_zone_id]
             apps = [app for app, _ in with_template]
             templates = {app.id: slug for app, slug in with_template}  # None: no template
             declared = list(await session.scalars(select(TopologyNode).order_by(TopologyNode.id)))
