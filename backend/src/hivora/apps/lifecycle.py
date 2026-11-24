@@ -137,6 +137,7 @@ class Deployer:
         self.bus.publish("app.created", app=app.slug, template=plan.entry.slug, job=job.id)
         return app, job
 
+
 class Lifecycle:
     """Start, stop, restart and removal of a deployed (or adopted) app."""
 

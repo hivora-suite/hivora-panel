@@ -5311,6 +5311,8 @@ export interface components {
             docker_version: string | null;
             /** Games */
             games: boolean;
+            /** Installer */
+            installer?: string | null;
             /** Labs */
             labs: boolean;
             /** Python */

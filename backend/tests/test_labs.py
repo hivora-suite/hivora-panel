@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 from helpers import API, admin, code, wait_job
 from test_templates import minimal
 
+from hivora import __version__
 from hivora.core.config import Settings
 from hivora.docker_gateway.fake import FakeDockerGateway
 from hivora.labs.api import balance
@@ -82,6 +83,13 @@ def test_labs_off_hides_targets_and_refuses_deploy(tmp_path: Path) -> None:
         refused = client.post(f"{API}/apps", json={"template": "juice-shop", "name": "js",
                                                    "inputs": {"web_port": 3000}})  # fmt: skip
         assert refused.status_code == 403 and code(refused) == "labs_disabled"
+        # The System page shows the module off, with this version's installer to turn it on.
+        info = client.get(f"{API}/system/info").json()
+        assert info["labs"] is False and info["games"] is True
+        assert info["installer"] == (
+            'sudo sh -c "$(curl -fsSL https://github.com/hivora-suite/hivora-panel/releases/'
+            f'download/v{__version__}/install.sh)" install.sh'
+        )
 
 
 def test_labs_on_deploys_into_its_own_zone_and_stays_out_of_topology(tmp_path: Path) -> None:

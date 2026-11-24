@@ -10,6 +10,7 @@ import { useI18n, type MessageKey } from "@/lib/i18n";
 
 const StatusCard = dynamic(() => import("@/features/system/status-card").then((m) => m.StatusCard));
 const ReleasesCard = dynamic(() => import("@/features/system/releases-card").then((m) => m.ReleasesCard));
+const ModulesCard = dynamic(() => import("@/features/system/modules-card").then((m) => m.ModulesCard));
 const HostUpdatesCard = dynamic(() => import("@/features/system/host-updates-card").then((m) => m.HostUpdatesCard));
 
 /** The panel itself: its version and machine, its health, its updates (the last two for
@@ -25,6 +26,7 @@ export default function SystemPage() {
         {can("admin") && <ReleasesCard />}
         {can("admin") && <HostUpdatesCard />}
         {can("admin") && <StatusCard />}
+        <ModulesCard />
         {system && (
           <Card className="xl:col-span-2">
             <CardHeader>

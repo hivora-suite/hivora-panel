@@ -6282,6 +6282,17 @@
             "title": "Games",
             "type": "boolean"
           },
+          "installer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Installer"
+          },
           "labs": {
             "title": "Labs",
             "type": "boolean"

@@ -97,6 +97,21 @@ sudo sh -c "$(curl -fsSL https://github.com/hivora-suite/hivora-panel/releases/l
 
 Les options sont gardées dans `/opt/hivora/data/install.env` et reprises à chaque relance.
 
+### Activer un module plus tard
+
+Les jeux et le module Cybersécurité s'activent ou se coupent en relançant l'installeur avec
+l'option du module ; les autres options sont gardées. La page **Système → Modules annexes**
+du panel montre leur état et donne la commande exacte (l'installeur de la version en place,
+sans mise à jour), par exemple :
+
+```sh
+sudo sh -c "$(curl -fsSL https://github.com/hivora-suite/hivora-panel/releases/latest/download/install.sh)" install.sh \
+  --yes --labs
+```
+
+Les apps et labs déjà installés continuent de tourner ; ceux d'un module coupé sont seulement
+masqués.
+
 ## Première connexion
 
 - Ouvrez l'URL affichée à la fin. Le certificat est auto-signé : votre navigateur vous

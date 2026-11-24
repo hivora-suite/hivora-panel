@@ -8,6 +8,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ### Modifié
 
+- **Modules annexes** : la page Système montre si les jeux et le module Cybersécurité sont activés, avec la commande à lancer sur la machine pour les activer ou les couper.
 - **Labs plus lisibles** : chaque cible vulhub porte le nom de son produit (« 1Panel », « Apache OFBiz »…) et, en dessous, la faille en clair (« Injection SQL, compte requis », « Désérialisation non sûre → exécution de code ») ; le titre d'origine reste affiché en petit. Nouveau filtre « Type de faille », familles traduites, plus de difficulté « moyenne » inventée.
 - **Mon compose** : déployez votre propre fichier docker compose depuis le menu Applications (ou, dans Cybersécurité, comme cible personnalisée de la zone Labo). Hivora le vérifie, y ajoute le nom du projet, ses labels et des IP fixes, puis le gère comme une autre app. Réservé aux administrateurs.
 - Les fenêtres du panel s'ouvrent directement au centre de l'écran, sans glisser depuis le coin.

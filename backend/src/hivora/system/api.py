@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from hivora import __version__
 from hivora.apps.api.common import JobRef, job_ref
 from hivora.core.errors import PermissionDeniedError
-from hivora.system.releases import Channel
+from hivora.system.releases import Channel, repo_of, update_command
 from hivora.system.secrets import SecretSetting
 from hivora.system.status import Level, SystemStatus, worst
 from hivora.web.deps import Admin, RuntimeDep, Viewer
@@ -32,6 +32,9 @@ class SystemInfo(BaseModel):
     python: str
     games: bool  # off: the installer's --no-games (the catalog shows no game)
     labs: bool  # on: the installer's --labs (the Cybersecurity space and its vulnerable targets)
+    # This version's installer, to which an option is added (--labs…): re-running it changes
+    # only that option (install.env keeps the others). None: not a GitHub source.
+    installer: str | None = None
 
 
 @router.get("/health")
@@ -54,6 +57,9 @@ async def info(_: Viewer, rt: RuntimeDep) -> SystemInfo:
         python=platform.python_version(),
         games=rt.settings.games,
         labs=rt.settings.labs,
+        installer=f"{update_command(repo, f'v{__version__}')} install.sh"
+        if (repo := repo_of(rt.settings.source_url))
+        else None,
     )
 
 
