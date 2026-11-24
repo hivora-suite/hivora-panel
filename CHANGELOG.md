@@ -6,12 +6,17 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ## [Non publié]
 
+### Ajouté
+
+- **Module Cybersécurité** (désactivé par défaut ; question de l'installeur ou `--labs`) : des cibles volontairement vulnérables pour les cours de sécurité, rangées par phase de la kill chain, dans une zone « Labo » à part (hors topologie, jamais reliée aux autres apps). Au catalogue : DVWA, Juice Shop, WebGoat et 215 environnements vulhub. Déploiement de plusieurs copies d'un coup (IP et ports attribués), tableau de bord labo (éteindre, redémarrer, supprimer en lot), guide de solution dans un lecteur imprimable.
+- **VPN de labo et élèves** : liste de la classe, répartition automatique sur les labs, chaque élève ne joint que l'IP de ses labs (filtré par le serveur, pas seulement par sa configuration), export zip pour la classe (une configuration WireGuard et une fiche par élève), désactivation du VPN.
+- **Mon compose** : déployez votre propre fichier docker compose depuis le menu Applications (ou, dans Cybersécurité, comme cible personnalisée de la zone Labo). Hivora le vérifie, y ajoute le nom du projet, ses labels et des IP fixes, puis le gère comme une autre app. Réservé aux administrateurs.
+- **Modules annexes** : la page Système montre si les jeux et le module Cybersécurité sont activés, avec la commande à lancer sur la machine pour les activer ou les couper.
+
 ### Modifié
 
 - **Moins de mémoire** : le panel ne charge plus l'outil de migration de la base quand elle est déjà à jour (environ 8 Mo de RAM en moins au repos).
-- **Modules annexes** : la page Système montre si les jeux et le module Cybersécurité sont activés, avec la commande à lancer sur la machine pour les activer ou les couper.
 - **Labs plus lisibles** : chaque cible vulhub porte le nom de son produit (« 1Panel », « Apache OFBiz »…) et, en dessous, la faille en clair (« Injection SQL, compte requis », « Désérialisation non sûre → exécution de code ») ; le titre d'origine reste affiché en petit. Nouveau filtre « Type de faille », familles traduites, plus de difficulté « moyenne » inventée.
-- **Mon compose** : déployez votre propre fichier docker compose depuis le menu Applications (ou, dans Cybersécurité, comme cible personnalisée de la zone Labo). Hivora le vérifie, y ajoute le nom du projet, ses labels et des IP fixes, puis le gère comme une autre app. Réservé aux administrateurs.
 - Les fenêtres du panel s'ouvrent directement au centre de l'écran, sans glisser depuis le coin.
 - **Nouvel emplacement** : le dépôt est maintenant `hivora-suite/hivora-panel`, l'image `ghcr.io/hivora-suite/hivora-panel`. Depuis une version 0.5.3 ou antérieure, relancez une fois l'installeur : il passe seul à la nouvelle image ; le bouton « Mettre à jour » de ces versions ne la trouve pas.
 
