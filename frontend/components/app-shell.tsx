@@ -56,7 +56,8 @@ export const FIREWALL_TABS: Entry[] = [
   { href: "/firewall/routes/", label: "fw.tab.routes", icon: Route },
 ];
 
-type NavItem = Entry & { role: Role; also?: string[]; sub?: Entry[] };
+// `advanced`: only shown in advanced mode (a new option is born there, CLAUDE.md).
+type NavItem = Entry & { role: Role; also?: string[]; sub?: Entry[]; advanced?: boolean };
 // `tone`: the group's hue (--g), for its header, edge and active bar. `flag`: a SystemInfo
 // switch that must be on for the group to show (e.g. "labs", off by default).
 type NavGroup = { key: string; label: MessageKey; tone: string; items: NavItem[]; flag?: "labs" };
@@ -73,7 +74,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/catalog/", label: "nav.catalog", icon: Boxes, role: "viewer", also: ["/deploy/"] },
       { href: "/custom/", label: "custom.title", icon: Container, role: "operator" },
-      { href: "/compose/", label: "nav.ownCompose", icon: FileStack, role: "admin" },
+      { href: "/compose/", label: "nav.ownCompose", icon: FileStack, role: "admin", advanced: true },
       { href: "/python/", label: "py.title", icon: FileCode, role: "operator" },
       { href: "/sites/", label: "nav.sites", icon: Globe, role: "viewer", also: ["/app/site/", "/site/"] },
     ],
@@ -99,7 +100,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/labs/dashboard/", label: "nav.labs.dashboard", icon: Bug, role: "viewer" },
       { href: "/labs/students/", label: "nav.labs.students", icon: Users, role: "viewer" },
       { href: "/labs/vpn/", label: "nav.labs.vpn", icon: KeyRound, role: "viewer" },
-      { href: "/labs/compose/", label: "nav.labs.compose", icon: FileStack, role: "admin" },
+      { href: "/labs/compose/", label: "nav.labs.compose", icon: FileStack, role: "admin", advanced: true },
     ],
   },
   {
@@ -264,14 +265,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                       </Button>
                     </SheetTrigger>
                     <SheetContent title={t("nav.menu")} closeLabel={t("common.close")} resizeLabel={t("common.resize")} widthKey="nav">
-                      <NavTree pathname={pathname} can={session.can} attention={attention} onNavigate={checkUpdates} />
+                      <NavTree pathname={pathname} can={session.can} advanced={session.advanced} attention={attention} onNavigate={checkUpdates} />
                       <div className="mt-6 grid gap-3 border-t pt-4">{footer}</div>
                     </SheetContent>
                   </Sheet>
                 </div>
               </div>
               <div className="hidden md:block">
-                <NavTree pathname={pathname} can={session.can} attention={attention} onNavigate={checkUpdates} />
+                <NavTree pathname={pathname} can={session.can} advanced={session.advanced} attention={attention} onNavigate={checkUpdates} />
               </div>
               <div className="mt-auto hidden flex-col gap-2 px-2 pt-3 md:flex">
                 <ShelfCat />
@@ -320,9 +321,10 @@ function SearchButton({ onClick }: { onClick: () => void }) {
 
 /** The side menu: the dashboard, then the groups, each folding (remembered in this
  *  browser); the group of the current page is always open. */
-function NavTree({ pathname, can, attention, onNavigate }: {
+function NavTree({ pathname, can, advanced, attention, onNavigate }: {
   pathname: string;
   can: (role: Role) => boolean;
+  advanced: boolean;
   attention: keyof typeof DOT | null;
   onNavigate: () => void;
 }) {
@@ -383,7 +385,7 @@ function NavTree({ pathname, can, attention, onNavigate }: {
     <nav aria-label={t("nav.menu")} className="flex flex-col gap-1">
       {link(NAV_HOME)}
       {groups.map((g) => {
-        const items = g.items.filter((n) => can(n.role));
+        const items = g.items.filter((n) => can(n.role) && (!n.advanced || advanced));
         if (items.length === 0) return null;
         const open = !folded[g.key];
         const here = g.key === home;

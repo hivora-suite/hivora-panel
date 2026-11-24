@@ -15,10 +15,15 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ### Modifié
 
+- « Mon compose » et « Cible personnalisée » n'apparaissent dans le menu qu'en mode avancé (toujours accessibles par la recherche).
 - **Moins de mémoire** : le panel ne charge plus l'outil de migration de la base quand elle est déjà à jour (environ 8 Mo de RAM en moins au repos).
 - **Labs plus lisibles** : chaque cible vulhub porte le nom de son produit (« 1Panel », « Apache OFBiz »…) et, en dessous, la faille en clair (« Injection SQL, compte requis », « Désérialisation non sûre → exécution de code ») ; le titre d'origine reste affiché en petit. Nouveau filtre « Type de faille », familles traduites, plus de difficulté « moyenne » inventée.
 - Les fenêtres du panel s'ouvrent directement au centre de l'écran, sans glisser depuis le coin.
 - **Nouvel emplacement** : le dépôt est maintenant `hivora-suite/hivora-panel`, l'image `ghcr.io/hivora-suite/hivora-panel`. Depuis une version 0.5.3 ou antérieure, relancez une fois l'installeur : il passe seul à la nouvelle image ; le bouton « Mettre à jour » de ces versions ne la trouve pas.
+
+### Corrigé
+
+- Les fenêtres de suivi des tâches ne disparaissent plus après quelques actions rapides : le résumé groupé n'apparaît que pour trois tâches lancées en même temps.
 
 ## [0.5.3] - 2026-11-09
 

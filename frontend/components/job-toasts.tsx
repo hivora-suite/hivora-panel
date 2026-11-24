@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 const CLOSE_AFTER_MS = 5_000; // after the job ends well; a failure stays until closed
 const LEAVE_MS = 560; // the slide out, then the stack closes the gap
-const SUMMARY_FROM = 3; // from this many pop-ups, one summary stands for them (unfolds on a click)
+const SUMMARY_FROM = 3; // from this many jobs running at once, one summary stands for them (unfolds on a click)
 
 type Tracked = { id: number; onFinished?: (status: string) => void };
 type Track = (jobId: number, onFinished?: (status: string) => void) => void;
@@ -33,8 +33,16 @@ export function JobToasts({ children }: { children: ReactNode }) {
   const [expanded, setExpanded] = useState(false);
   const close = useCallback((id: number) => setJobs((list) => list.filter((j) => j.id !== id)), []);
   const ended = useCallback((id: number, status: string) => setEnds((e) => ({ ...e, [id]: status })), []);
-  const closeAll = useCallback(() => { setJobs([]); setEnds({}); setExpanded(false); }, []);
-  const summary = jobs.length >= SUMMARY_FROM;
+  const [batch, setBatch] = useState(false); // a batch started: the summary stays until closed
+  const closeAll = useCallback(() => { setJobs([]); setEnds({}); setExpanded(false); setBatch(false); }, []);
+  // Running at once, not merely shown: finished pop-ups linger 5 s, and a few quick actions
+  // one after another must keep their own pop-ups.
+  const running = jobs.filter((j) => ends[j.id] === undefined).length;
+  useEffect(() => {
+    if (running >= SUMMARY_FROM) setBatch(true);
+    else if (jobs.length === 0) setBatch(false); // every pop-up closed by hand
+  }, [running, jobs.length]);
+  const summary = batch && jobs.length > 0;
   return (
     <JobToastsContext.Provider value={track}>
       {children}
