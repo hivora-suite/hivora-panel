@@ -80,7 +80,7 @@ class LabInfo(_Strict):
     cves: Annotated[list[Annotated[str, Field(pattern=CVE.pattern)]], Field(default=[])]
     os: list[LabOS] = []
     tech: list[str] = []  # free tags for filtering: web, cms, database, network, auth…
-    difficulty: Literal["easy", "medium", "hard"] = "medium"
+    difficulty: Literal["easy", "medium", "hard"] | None = None  # None: not assessed
     summary: Localized = ""
     solution: Localized = ""  # the teacher's walkthrough; hidden by default in the UI
     needs_vpn: bool = False  # scanned over the network (nmap…): deployed only behind the labs VPN

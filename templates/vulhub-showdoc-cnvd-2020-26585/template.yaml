@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-showdoc-cnvd-2020-26585
-  name: ShowDoc Unauthenticated File Upload and Remote Code Execution
-  version: 1.0.0
+  name: ShowDoc
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - showdoc
-  description: ShowDoc — ShowDoc Unauthenticated File Upload and Remote Code Execution (vulhub).
+  description: ShowDoc Unauthenticated File Upload and Remote Code Execution (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/showdoc/CNVD-2020-26585
   maintainer: vulhub
@@ -21,9 +21,9 @@ metadata:
     - linux
     tech:
     - rce
-    - showdoc
-    difficulty: medium
-    summary: ShowDoc Unauthenticated File Upload and Remote Code Execution
+    summary:
+      fr: Exécution de code à distance, sans authentification
+      en: Remote code execution, unauthenticated
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/showdoc/CNVD-2020-26585

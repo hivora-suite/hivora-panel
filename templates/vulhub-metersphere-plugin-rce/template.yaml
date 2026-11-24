@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-metersphere-plugin-rce
-  name: MeterSphere Plugin Endpoint Remote Code Execution
-  version: 1.0.0
+  name: MeterSphere
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - metersphere
-  description: MeterSphere — MeterSphere Plugin Endpoint Remote Code Execution (vulhub).
+  description: MeterSphere Plugin Endpoint Remote Code Execution (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/metersphere/plugin-rce
   maintainer: vulhub
@@ -20,10 +20,10 @@ metadata:
     os:
     - linux
     tech:
-    - metersphere
     - rce
-    difficulty: medium
-    summary: MeterSphere Plugin Endpoint Remote Code Execution
+    summary:
+      fr: Exécution de code à distance
+      en: Remote code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/metersphere/plugin-rce

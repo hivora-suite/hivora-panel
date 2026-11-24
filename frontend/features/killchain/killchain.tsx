@@ -18,7 +18,8 @@ import { useI18n, type Localized, type MessageKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type Phase = "recon" | "weaponization" | "delivery" | "exploitation" | "installation" | "c2" | "actions";
-type LabInfo = { phase: Phase; cves: string[]; os: string[]; tech: string[]; difficulty: "easy" | "medium" | "hard"; summary: Localized; needs_vpn?: boolean };
+type Difficulty = "easy" | "medium" | "hard";
+type LabInfo = { phase: Phase; cves: string[]; os: string[]; tech: string[]; difficulty?: Difficulty | null; summary: Localized; needs_vpn?: boolean };
 type Lab = TemplateSummary & { lab: LabInfo };
 
 const PHASES: { key: Phase; icon: typeof Search }[] = [
@@ -31,7 +32,14 @@ const PHASES: { key: Phase; icon: typeof Search }[] = [
   { key: "actions", icon: Flag },
 ];
 
-const DIFF: Record<LabInfo["difficulty"], string> = {
+// The tags that name a kind of flaw; the others are families (cms, database…).
+const VULNS = [
+  "sql-injection", "deserialization", "expression-injection", "ssti", "environment-injection", "xxe", "ssrf", "path-traversal",
+  "file-upload", "file-deletion", "auth-bypass", "hard-coding", "info-disclosure", "xss", "privilege-escalation", "dos", "rce",
+] as const;
+const isVuln = (tag: string) => (VULNS as readonly string[]).includes(tag);
+
+const DIFF: Record<Difficulty, string> = {
   easy: "border-ok/40 bg-ok/10 text-ok",
   medium: "border-warn/40 bg-warn/10 text-warn",
   hard: "border-danger/40 bg-danger/10 text-danger",
@@ -144,8 +152,19 @@ function DeployMenu({ tp }: { tp: Lab }) {
   );
 }
 
+/** A family tag in words (cms → CMS), or as it is when the panel has no name for it. */
+function useFamily() {
+  const { t } = useI18n();
+  return (tag: string) => {
+    const key = `labs.family.${tag}` as MessageKey;
+    const word = t(key);
+    return word === key ? tag : word; // t gives the key back when it has no text
+  };
+}
+
 function LabCard({ tp, vpnOn }: { tp: Lab; vpnOn: boolean }) {
   const { t, l } = useI18n();
+  const family = useFamily();
   const { lab } = tp;
   const blocked = Boolean(lab.needs_vpn) && !vpnOn; // a target to scan: only behind the labs VPN
   return (
@@ -155,10 +174,12 @@ function LabCard({ tp, vpnOn }: { tp: Lab; vpnOn: boolean }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h3 className="truncate font-semibold">{tp.name}</h3>
-            <Badge className={cn("border", DIFF[lab.difficulty])}>{t(`labs.diff.${lab.difficulty}` as MessageKey)}</Badge>
+            {lab.difficulty && <Badge className={cn("border", DIFF[lab.difficulty])}>{t(`labs.diff.${lab.difficulty}` as MessageKey)}</Badge>}
             {lab.needs_vpn && <Badge className="border-(--nav-labs)/40 bg-(--nav-labs)/10 text-(--nav-labs)">{t("labs.needsVpn")}</Badge>}
           </div>
-          <p className="text-sm text-muted-foreground">{l(lab.summary) || l(tp.description)}</p>
+          {/* The flaw in plain words; the source's own title below (to find it in its docs). */}
+          <p className="text-sm font-medium text-(--nav-labs)">{l(lab.summary) || l(tp.description)}</p>
+          {l(lab.summary) && <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{l(tp.description)}</p>}
         </div>
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -169,7 +190,7 @@ function LabCard({ tp, vpnOn }: { tp: Lab; vpnOn: boolean }) {
             {t(`catalog.only.${tp.arch[0]}` as MessageKey)}
           </Badge>
         )}
-        {lab.tech.map((x) => <Badge key={x} className="border-border bg-muted text-muted-foreground">{x}</Badge>)}
+        {lab.tech.filter((x) => !isVuln(x)).map((x) => <Badge key={x} className="border-border bg-muted text-muted-foreground">{family(x)}</Badge>)}
         {lab.cves.map((c) => (
           <a key={c} href={`https://nvd.nist.gov/vuln/detail/${c}`} target="_blank" rel="noreferrer">
             <Badge className="border-danger/40 bg-danger/10 font-mono text-danger hover:underline">{c}</Badge>
@@ -201,18 +222,20 @@ function LabCard({ tp, vpnOn }: { tp: Lab; vpnOn: boolean }) {
 }
 
 export function KillChain() {
-  const { t } = useI18n();
+  const { t, l } = useI18n();
+  const family = useFamily();
   const { data: info } = useSystemInfo();
   const { data: templates, isLoading } = useTemplates();
   const { data: vpn } = useLabsVpn();
   const [phase, setPhase] = useState<Phase | null>(null);
   const [os, setOs] = useState("all");
-  const [tech, setTech] = useState("all");
+  const [tech, setTech] = useState("all"); // a family
+  const [vuln, setVuln] = useState("all");
   const [diff, setDiff] = useState("all");
   const [cve, setCve] = useState("all"); // "all" | "with" | "without" | a year
   const [q, setQ] = useState("");
   const [more, setMore] = useState(false); // the extra filters, folded by default
-  const reset = () => { setPhase(null); setOs("all"); setTech("all"); setDiff("all"); setCve("all"); setQ(""); };
+  const reset = () => { setPhase(null); setOs("all"); setTech("all"); setVuln("all"); setDiff("all"); setCve("all"); setQ(""); };
 
   const labs = useMemo(() => (templates ?? []).filter(isLab), [templates]);
   const counts = useMemo(() => {
@@ -221,7 +244,8 @@ export function KillChain() {
     return c;
   }, [labs]);
   const allOs = useMemo(() => [...new Set(labs.flatMap((tp) => tp.lab.os))], [labs]);
-  const allTech = useMemo(() => [...new Set(labs.flatMap((tp) => tp.lab.tech))].sort(), [labs]);
+  const allTech = useMemo(() => [...new Set(labs.flatMap((tp) => tp.lab.tech.filter((x) => !isVuln(x))))].sort(), [labs]);
+  const allVulns = VULNS.filter((v) => labs.some((tp) => tp.lab.tech.includes(v)));
   const allDiff = (["easy", "medium", "hard"] as const).filter((d) => labs.some((tp) => tp.lab.difficulty === d));
   // CVE-2021-44228 -> "2021", newest first.
   const allYears = useMemo(() => [...new Set(labs.flatMap((tp) => tp.lab.cves.map((c) => c.split("-")[1])))].sort().reverse(), [labs]);
@@ -229,7 +253,8 @@ export function KillChain() {
   const active = [
     diff !== "all" && { key: "diff", label: t(`labs.diff.${diff}` as MessageKey), clear: () => setDiff("all") },
     cve !== "all" && { key: "cve", label: cve === "with" ? t("labs.filter.cveWith") : cve === "without" ? t("labs.filter.cveWithout") : t("labs.filter.cveYear", { year: cve }), clear: () => setCve("all") },
-    tech !== "all" && { key: "tech", label: tech, clear: () => setTech("all") },
+    vuln !== "all" && { key: "vuln", label: t(`labs.vuln.${vuln}` as MessageKey), clear: () => setVuln("all") },
+    tech !== "all" && { key: "tech", label: family(tech), clear: () => setTech("all") },
     os !== "all" && { key: "os", label: os, clear: () => setOs("all") },
   ].filter((f): f is { key: string; label: string; clear: () => void } => !!f);
   const cveOk = (cves: string[]) =>
@@ -238,8 +263,9 @@ export function KillChain() {
 
   const shown = labs.filter(
     (tp) => (!phase || tp.lab.phase === phase) && (os === "all" || tp.lab.os.includes(os)) && (tech === "all" || tp.lab.tech.includes(tech))
+      && (vuln === "all" || tp.lab.tech.includes(vuln))
       && (diff === "all" || tp.lab.difficulty === diff) && cveOk(tp.lab.cves)
-      && (!needle || [tp.name, tp.slug, ...tp.lab.cves, ...tp.lab.tech].some((s) => s.toLowerCase().includes(needle))),
+      && (!needle || [tp.name, tp.slug, l(tp.description), l(tp.lab.summary), ...tp.lab.cves, ...tp.lab.tech].some((s) => s.toLowerCase().includes(needle))),
   );
 
   if (info && !info.labs) return <p className="text-muted-foreground">{t("labs.off")}</p>;
@@ -279,7 +305,11 @@ export function KillChain() {
           <span className="text-sm whitespace-nowrap text-muted-foreground">{t("labs.filter.count", { n: shown.length, total: labs.length })}</span>
         </div>
         {more && (
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            <Select value={vuln} onChange={(e) => setVuln(e.target.value)} aria-label={t("labs.filter.vuln")} className="h-9">
+              <option value="all">{t("labs.filter.vuln")}</option>
+              {allVulns.map((v) => <option key={v} value={v}>{t(`labs.vuln.${v}` as MessageKey)}</option>)}
+            </Select>
             <Select value={diff} onChange={(e) => setDiff(e.target.value)} aria-label={t("labs.filter.diff")} className="h-9">
               <option value="all">{t("labs.filter.diff")}</option>
               {allDiff.map((d) => <option key={d} value={d}>{t(`labs.diff.${d}` as MessageKey)}</option>)}
@@ -292,7 +322,7 @@ export function KillChain() {
             </Select>
             <Select value={tech} onChange={(e) => setTech(e.target.value)} aria-label={t("labs.filter.tech")} className="h-9">
               <option value="all">{t("labs.filter.tech")}</option>
-              {allTech.map((x) => <option key={x} value={x}>{x}</option>)}
+              {allTech.map((x) => <option key={x} value={x}>{family(x)}</option>)}
             </Select>
             <Select value={os} onChange={(e) => setOs(e.target.value)} aria-label={t("labs.filter.os")} className="h-9">
               <option value="all">{t("labs.filter.os")}</option>

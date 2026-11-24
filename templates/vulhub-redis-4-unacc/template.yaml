@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-redis-4-unacc
-  name: Redis 4.x/5.x Command Execution due to Master-Slave Replication
-  version: 1.0.0
+  name: Redis
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - redis
-  description: Redis — Redis 4.x/5.x Command Execution due to Master-Slave Replication (vulhub).
+  description: Redis 4.x/5.x Command Execution due to Master-Slave Replication (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/redis/4-unacc
   maintainer: vulhub
@@ -22,9 +22,9 @@ metadata:
     tech:
     - database
     - rce
-    - redis
-    difficulty: medium
-    summary: Redis 4.x/5.x Command Execution due to Master-Slave Replication
+    summary:
+      fr: Exécution de code à distance
+      en: Remote code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/redis/4-unacc

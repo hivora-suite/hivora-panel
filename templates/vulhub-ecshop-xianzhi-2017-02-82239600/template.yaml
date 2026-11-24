@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-ecshop-xianzhi-2017-02-82239600
-  name: ECShop 2.x/3.x SQL Injection/Arbitrary Code Execution
-  version: 1.0.0
+  name: ECShop
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - ecshop
-  description: ECshop — ECShop 2.x/3.x SQL Injection/Arbitrary Code Execution (vulhub).
+  description: ECShop 2.x/3.x SQL Injection/Arbitrary Code Execution (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/ecshop/xianzhi-2017-02-82239600
   maintainer: vulhub
@@ -21,11 +21,11 @@ metadata:
     - linux
     tech:
     - cms
-    - ecshop
     - rce
     - sql-injection
-    difficulty: medium
-    summary: ECShop 2.x/3.x SQL Injection/Arbitrary Code Execution
+    summary:
+      fr: Injection SQL → exécution de code
+      en: SQL injection → code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/ecshop/xianzhi-2017-02-82239600

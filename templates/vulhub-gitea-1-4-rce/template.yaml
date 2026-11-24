@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-gitea-1-4-rce
-  name: Gitea 1.4.0 Directory Traversal Leading to Remote Command Execution
-  version: 1.0.0
+  name: Gitea
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - gitea
-  description: Gitea — Gitea 1.4.0 Directory Traversal Leading to Remote Command Execution (vulhub).
+  description: Gitea 1.4.0 Directory Traversal Leading to Remote Command Execution (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/gitea/1.4-rce
   maintainer: vulhub
@@ -20,11 +20,11 @@ metadata:
     os:
     - linux
     tech:
-    - gitea
     - path-traversal
     - rce
-    difficulty: medium
-    summary: Gitea 1.4.0 Directory Traversal Leading to Remote Command Execution
+    summary:
+      fr: Traversée de répertoires → exécution de code
+      en: Path traversal → code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/gitea/1.4-rce

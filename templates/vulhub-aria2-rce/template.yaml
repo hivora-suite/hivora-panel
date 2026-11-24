@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-aria2-rce
-  name: Aria2 Arbitrary File Write
-  version: 1.0.0
+  name: Aria2
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - aria2
-  description: Aria2 — Aria2 Arbitrary File Write (vulhub).
+  description: Aria2 Arbitrary File Write (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/aria2/rce
   maintainer: vulhub
@@ -20,11 +20,11 @@ metadata:
     os:
     - linux
     tech:
-    - aria2
     - file-upload
     - rce
-    difficulty: medium
-    summary: Aria2 Arbitrary File Write
+    summary:
+      fr: Envoi de fichier arbitraire → exécution de code
+      en: Arbitrary file upload → code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/aria2/rce

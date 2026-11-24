@@ -10,7 +10,7 @@ import { useTemplate } from "@/lib/api/hooks";
 import { LANGS, useI18n, type Localized, type MessageKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-type LabInfo = { phase: string; cves: string[]; difficulty: string; solution: Localized };
+type LabInfo = { phase: string; cves: string[]; difficulty?: string | null; solution: Localized };
 
 const ZOOMS = [70, 80, 90, 100, 110, 125, 150, 175, 200];
 
@@ -90,7 +90,7 @@ function Reader() {
               className="mx-auto min-h-[297mm] w-full max-w-[210mm] bg-white px-[18mm] py-[16mm] font-sans text-[15px] text-zinc-800 shadow-[0_4px_24px_rgba(0,0,0,0.45)] print:max-w-none print:p-0 print:shadow-none print:[zoom:1]">
               <header className="mb-6 border-b-2 border-zinc-900 pb-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                  {t(`labs.phase.${lab.phase}` as MessageKey)} · {t(`labs.diff.${lab.difficulty}` as MessageKey)}
+                  {t(`labs.phase.${lab.phase}` as MessageKey)}{lab.difficulty && ` · ${t(`labs.diff.${lab.difficulty}` as MessageKey)}`}
                 </p>
                 <h1 className="mt-1 text-3xl font-bold text-zinc-900">{tp?.name}</h1>
                 {lab.cves.length > 0 && <p className="mt-1 font-mono text-sm text-red-700">{lab.cves.join(" · ")}</p>}

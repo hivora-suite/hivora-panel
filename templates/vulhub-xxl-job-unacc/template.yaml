@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-xxl-job-unacc
-  name: XXL-JOB Executor Unauthorized Access
-  version: 1.0.0
+  name: XXL-JOB
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - xxl-job
-  description: XXL-JOB — XXL-JOB Executor Unauthorized Access (vulhub).
+  description: XXL-JOB Executor Unauthorized Access (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/xxl-job/unacc
   maintainer: vulhub
@@ -21,9 +21,9 @@ metadata:
     - linux
     tech:
     - auth-bypass
-    - xxl-job
-    difficulty: medium
-    summary: XXL-JOB Executor Unauthorized Access
+    summary:
+      fr: Contournement d'authentification
+      en: Authentication bypass
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/xxl-job/unacc

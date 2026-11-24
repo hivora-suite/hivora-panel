@@ -29,7 +29,7 @@ const DOT: Record<AppStatus, string> = {
   stopped: "bg-idle", error: "bg-danger", missing: "bg-idle",
 };
 
-type LabInfo = { name: string; phase: string; difficulty: "easy" | "medium" | "hard" };
+type LabInfo = { name: string; phase: string; difficulty?: "easy" | "medium" | "hard" | null };
 
 /** Whether the lab is behind the labs VPN, with its students: a shortcut to its VPN group. */
 function VpnBadge({ vpn, slug }: { vpn: { enabled: boolean; lab: LabsVpnLab | undefined } | null; slug: string }) {
@@ -108,7 +108,7 @@ function Group({ name, icon, lab, apps, running, children, selectable, picked, o
         </div>
         <div className="hidden flex-wrap gap-1.5 text-xs sm:flex">
           {lab && <Badge className="border-(--nav-labs)/40 bg-(--nav-labs)/10 text-(--nav-labs)">{t(`labs.phase.${lab.phase}` as MessageKey)}</Badge>}
-          {lab && <Badge className="border-border bg-muted text-muted-foreground">{t(`labs.diff.${lab.difficulty}` as MessageKey)}</Badge>}
+          {lab?.difficulty && <Badge className="border-border bg-muted text-muted-foreground">{t(`labs.diff.${lab.difficulty}` as MessageKey)}</Badge>}
         </div>
         <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
       </summary>

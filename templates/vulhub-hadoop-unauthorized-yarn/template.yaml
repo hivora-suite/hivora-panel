@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-hadoop-unauthorized-yarn
-  name: Hadoop YARN ResourceManager Unauthorized Access
-  version: 1.0.0
+  name: Hadoop YARN
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - hadoop-yarn
-  description: Hadoop YARN — Hadoop YARN ResourceManager Unauthorized Access (vulhub).
+  description: Hadoop YARN ResourceManager Unauthorized Access (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn
   maintainer: vulhub
@@ -21,10 +21,10 @@ metadata:
     - linux
     tech:
     - auth-bypass
-    - hadoop-yarn
     - rce
-    difficulty: medium
-    summary: Hadoop YARN ResourceManager Unauthorized Access
+    summary:
+      fr: Contournement d'authentification → exécution de code
+      en: Authentication bypass → code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn

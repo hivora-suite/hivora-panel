@@ -2,6 +2,7 @@
 
     git clone --depth 1 https://github.com/vulhub/vulhub /tmp/vulhub
     uv run python scripts/import_vulhub.py /tmp/vulhub
+    uv run python scripts/import_vulhub.py --retouch   # names and summaries of the imported ones
 
 Writes ``templates/vulhub-<path>/template.yaml`` for every environment made only of images
 (no ``build:``, no file of the repository mounted, no option the schema lacks), each image
@@ -23,7 +24,7 @@ import yaml
 
 from hivora.templates.schema import Template
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 OUT = Path(__file__).parents[2] / "templates"
 REPO = "https://github.com/vulhub/vulhub/tree/master/"
 # ponytail: options we cannot translate make the whole environment skipped, not half-imported.
@@ -38,6 +39,205 @@ NOTE = {
     "en": "Address: the IP:port shown by the panel (the guide's ports are vulhub's original "
     "ones), or the lab's IP on the original port through the labs VPN. Original guide:",
 }
+
+
+PRODUCTS = {  # vulhub's app slug -> the product's name, as its editor writes it
+    "1panel": "1Panel",
+    "adminer": "Adminer",
+    "adobe-coldfusion": "Adobe ColdFusion",
+    "aj-report": "AJ-Report",
+    "apache-activemq": "Apache ActiveMQ",
+    "apache-airflow": "Apache Airflow",
+    "apache-couchdb": "Apache CouchDB",
+    "apache-cxf": "Apache CXF",
+    "apache-druid": "Apache Druid",
+    "apache-flink": "Apache Flink",
+    "apache-hertzbeat": "Apache HertzBeat",
+    "apache-hugegraph": "Apache HugeGraph",
+    "apache-jmeter": "Apache JMeter",
+    "apache-kafka": "Apache Kafka",
+    "apache-linkis": "Apache Linkis",
+    "apache-log4j": "Apache Log4j 2",
+    "apache-ofbiz": "Apache OFBiz",
+    "apache-rocketmq": "Apache RocketMQ",
+    "apache-shiro": "Apache Shiro",
+    "apache-skywalking": "Apache SkyWalking",
+    "apache-solr": "Apache Solr",
+    "apache-spark": "Apache Spark",
+    "apache-struts2": "Apache Struts 2",
+    "apache-superset": "Apache Superset",
+    "apache-tomcat": "Apache Tomcat",
+    "apereo-cas": "Apereo CAS",
+    "aria2": "Aria2",
+    "cms-made-simple": "CMS Made Simple",
+    "comfyui": "ComfyUI",
+    "confluence": "Atlassian Confluence",
+    "craftcms": "CraftCMS",
+    "dataease": "DataEase",
+    "discuz": "Discuz!",
+    "django": "Django",
+    "drupal": "Drupal",
+    "ecshop": "ECShop",
+    "elasticsearch": "Elasticsearch",
+    "elfinder": "elFinder",
+    "erlang-otp-ssh": "Erlang/OTP SSH",
+    "fastjson": "Fastjson",
+    "geoserver": "GeoServer",
+    "git": "Git",
+    "gitea": "Gitea",
+    "glassfish": "GlassFish",
+    "gnu-inetutils": "GNU InetUtils",
+    "gogs": "Gogs",
+    "gotenberg": "Gotenberg",
+    "gradio": "Gradio",
+    "grafana": "Grafana",
+    "hadoop-yarn": "Hadoop YARN",
+    "influxdb": "InfluxDB",
+    "jackson-databind": "Jackson Databind",
+    "java-rmi": "Java RMI",
+    "jboss": "JBoss",
+    "jenkins": "Jenkins",
+    "jimureport": "JeecgBoot JimuReport",
+    "joomla": "Joomla",
+    "jupyter": "Jupyter",
+    "kibana": "Kibana",
+    "kkfileview": "kkFileView",
+    "langflow": "Langflow",
+    "laravel": "Laravel",
+    "laravel-livewire": "Laravel Livewire",
+    "libssh": "libssh",
+    "liferay-portal": "Liferay Portal",
+    "magento": "Magento",
+    "metabase": "Metabase",
+    "metersphere": "MeterSphere",
+    "mini-httpd": "ACME mini_httpd",
+    "mojarra-jsf": "Mojarra JSF",
+    "mysql": "MySQL",
+    "n8n": "n8n",
+    "nacos": "Alibaba Nacos",
+    "next-js": "Next.js",
+    "nexus-repository-manager": "Nexus Repository Manager",
+    "nginx-ui": "Nginx UI",
+    "ntopng": "ntopng",
+    "openclaw": "OpenClaw",
+    "openfire": "Openfire",
+    "openprinting-cups-browsed": "CUPS cups-browsed",
+    "opensmtpd": "OpenSMTPD",
+    "openssl": "OpenSSL",
+    "opentsdb": "OpenTSDB",
+    "owncloud": "ownCloud",
+    "pgadmin": "pgAdmin",
+    "php-fpm": "PHP-FPM",
+    "phpmyadmin": "phpMyAdmin",
+    "phpunit": "PHPUnit",
+    "polkit-pkexec": "Polkit pkexec",
+    "postgresql": "PostgreSQL",
+    "python": "Python aiohttp",
+    "react": "React",
+    "redis": "Redis",
+    "rocket-chat": "Rocket.Chat",
+    "ruby-on-rails": "Ruby on Rails",
+    "saltstack": "SaltStack",
+    "scrapyd": "Scrapyd",
+    "showdoc": "ShowDoc",
+    "spring": "Spring",
+    "spring-cloud-function": "Spring Cloud Function",
+    "spring-cloud-gateway": "Spring Cloud Gateway",
+    "spring-data-commons": "Spring Data Commons",
+    "spring-data-rest": "Spring Data REST",
+    "spring-messaging": "Spring Messaging",
+    "spring-security-oauth2": "Spring Security OAuth2",
+    "spring-webflow": "Spring WebFlow",
+    "springboot-h2-database": "H2 Database",
+    "supervisor": "Supervisor",
+    "teamcity": "JetBrains TeamCity",
+    "thinkphp": "ThinkPHP",
+    "uwsgi": "uWSGI",
+    "vite": "Vite",
+    "weblogic": "Oracle WebLogic",
+    "webmin": "Webmin",
+    "wordpress": "WordPress",
+    "xstream": "XStream",
+    "xxl-job": "XXL-JOB",
+}
+# vulhub's tags that name a kind of flaw (the others are families: cms, database…), most
+# specific first: the summary names them in this order.
+VULNS = {
+    "sql-injection": ("Injection SQL", "SQL injection"),
+    "deserialization": ("Désérialisation non sûre", "Insecure deserialization"),
+    "expression-injection": ("Injection d'expression", "Expression injection"),
+    "ssti": ("Injection de template (SSTI)", "Template injection (SSTI)"),
+    "environment-injection": ("Injection de variables d'environnement", "Environment injection"),
+    "xxe": ("Entité externe XML (XXE)", "XML external entity (XXE)"),
+    "ssrf": ("Requête forgée côté serveur (SSRF)", "Server-side request forgery (SSRF)"),
+    "path-traversal": ("Traversée de répertoires", "Path traversal"),
+    "file-upload": ("Envoi de fichier arbitraire", "Arbitrary file upload"),
+    "file-deletion": ("Suppression de fichier arbitraire", "Arbitrary file deletion"),
+    "auth-bypass": ("Contournement d'authentification", "Authentication bypass"),
+    "hard-coding": ("Secret codé en dur", "Hard-coded secret"),
+    "info-disclosure": ("Fuite d'informations", "Information disclosure"),
+    "xss": ("Cross-site scripting (XSS)", "Cross-site scripting (XSS)"),
+    "privilege-escalation": ("Élévation de privilèges", "Privilege escalation"),
+    "dos": ("Déni de service", "Denial of service"),
+    "rce": ("Exécution de code à distance", "Remote code execution"),
+}
+PRE_AUTH = re.compile(r"\b(pre-?auth\w*|unauth\w*|without auth\w*)\b", re.I)
+POST_AUTH = re.compile(r"\b(post-?auth\w*|authenticated)\b", re.I)
+
+
+def product(app: str) -> str:
+    return PRODUCTS.get(app) or app.replace("-", " ").title()
+
+
+def summary(tags: list[str], title: str) -> dict[str, str]:
+    """The flaw in plain words, FR and EN, from vulhub's tags (and its title's pre/post-auth)."""
+    found = [VULNS[t] for t in VULNS if t in tags]
+    if not found:
+        return {"fr": title, "en": title}
+    # "A · B → remote code execution": what the flaw leads to comes last, after an arrow.
+    *first, last = found
+    if first and last == VULNS["rce"]:
+        fr = " · ".join(f for f, _ in first) + " → exécution de code"
+        en = " · ".join(e for _, e in first) + " → code execution"
+    else:
+        fr, en = " · ".join(f for f, _ in found), " · ".join(e for _, e in found)
+    if "auth-bypass" in tags:  # says it already
+        pass
+    elif PRE_AUTH.search(title):
+        fr, en = f"{fr}, sans authentification", f"{en}, unauthenticated"
+    elif POST_AUTH.search(title):
+        fr, en = f"{fr}, compte requis", f"{en}, authenticated"
+    return {"fr": fr, "en": en}
+
+
+def present(meta: dict[str, Any], app: str, title: str, tags: list[str]) -> None:
+    """How a target shows in the panel: the product as its name, the flaw as its summary,
+    vulhub's own title as its description; no difficulty (vulhub does not rate them)."""
+    meta["name"] = product(app)
+    meta["description"] = f"{title} (vulhub)."
+    lab = meta["lab"]
+    lab["tech"] = sorted(t for t in tags if t != app)
+    lab["summary"] = summary(lab["tech"], title)
+    lab.pop("difficulty", None)
+
+
+def retouch() -> int:
+    """Re-present the templates already imported (no clone, no Docker Hub)."""
+    yaml.add_representer(str, _str, Dumper=yaml.SafeDumper)
+    n = 0
+    for path in sorted(OUT.glob("vulhub-*/template.yaml")):
+        tpl = yaml.safe_load(path.read_text())
+        meta = tpl["metadata"]
+        # Before: "<app> — <title> (vulhub)."; now: "<title> (vulhub).".
+        title = meta["description"].split(" — ", 1)[-1].removesuffix(" (vulhub).")
+        app = meta["tags"][1]
+        present(meta, app, title, [*meta["lab"]["tech"], app])
+        meta["version"] = VERSION
+        Template.model_validate(tpl)
+        path.write_text(yaml.safe_dump(tpl, sort_keys=False, allow_unicode=True, width=1000))
+        n += 1
+    print(f"{n} templates retouched")
+    return 0
 
 
 class Skip(Exception):
@@ -219,9 +419,6 @@ def convert(env: dict[str, Any], root: Path) -> dict[str, Any]:
                 "phase": "installation" if "Privilege Escalation" in tags else "exploitation",
                 "cves": [c for c in env.get("cve", []) if re.fullmatch(r"CVE-\d{4}-\d{4,}", c)],
                 "os": ["linux"],
-                "tech": sorted({slugify(t) for t in tags} | {slugify(env["app"])}),
-                "difficulty": "medium",
-                "summary": env["name"],
                 "solution": {lang: f"{note} {REPO + env['path']}\n" + solution(readme)
                              for lang, note in NOTE.items()},  # fmt: skip
             },
@@ -231,6 +428,7 @@ def convert(env: dict[str, Any], root: Path) -> dict[str, Any]:
         "services": services,
         "update": {"strategy": "manual"},
     }
+    present(tpl["metadata"], slugify(env["app"]), env["name"], [slugify(t) for t in tags])
     if web:
         tpl["access"] = {"web": web}
     Template.model_validate(tpl)
@@ -269,4 +467,4 @@ def main(root: Path) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(Path(sys.argv[1])))
+    sys.exit(retouch() if sys.argv[1] == "--retouch" else main(Path(sys.argv[1])))

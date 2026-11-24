@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-php-fpm
-  name: PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution
-  version: 1.0.0
+  name: PHP-FPM
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - php-fpm
-  description: PHP-FPM — PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution (vulhub).
+  description: PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/php/fpm
   maintainer: vulhub
@@ -21,10 +21,10 @@ metadata:
     - linux
     tech:
     - auth-bypass
-    - php-fpm
     - rce
-    difficulty: medium
-    summary: PHP-FPM FastCGI Unauthorized Access Leads to Remote Code Execution
+    summary:
+      fr: Contournement d'authentification → exécution de code
+      en: Authentication bypass → code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/php/fpm

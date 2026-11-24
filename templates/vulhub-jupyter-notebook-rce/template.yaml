@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-jupyter-notebook-rce
-  name: Jupyter Notebook Unauthorized Access
-  version: 1.0.0
+  name: Jupyter
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - jupyter
-  description: Jupyter — Jupyter Notebook Unauthorized Access (vulhub).
+  description: Jupyter Notebook Unauthorized Access (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/jupyter/notebook-rce
   maintainer: vulhub
@@ -21,9 +21,9 @@ metadata:
     - linux
     tech:
     - auth-bypass
-    - jupyter
-    difficulty: medium
-    summary: Jupyter Notebook Unauthorized Access
+    summary:
+      fr: Contournement d'authentification
+      en: Authentication bypass
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/jupyter/notebook-rce

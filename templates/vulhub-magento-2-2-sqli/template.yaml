@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-magento-2-2-sqli
-  name: Magento 2.2 SQL Injection
-  version: 1.0.0
+  name: Magento
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - magento
-  description: Magento — Magento 2.2 SQL Injection (vulhub).
+  description: Magento 2.2 SQL Injection (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/magento/2.2-sqli
   maintainer: vulhub
@@ -21,10 +21,10 @@ metadata:
     - linux
     tech:
     - cms
-    - magento
     - sql-injection
-    difficulty: medium
-    summary: Magento 2.2 SQL Injection
+    summary:
+      fr: Injection SQL
+      en: SQL injection
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/magento/2.2-sqli

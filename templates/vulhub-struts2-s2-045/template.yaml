@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-struts2-s2-045
-  name: S2-045 Remote Code Execution
-  version: 1.0.0
+  name: Apache Struts 2
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - apache-struts2
-  description: Apache Struts2 — S2-045 Remote Code Execution (vulhub).
+  description: S2-045 Remote Code Execution (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/struts2/s2-045
   maintainer: vulhub
@@ -21,11 +21,11 @@ metadata:
     os:
     - linux
     tech:
-    - apache-struts2
     - framework
     - rce
-    difficulty: medium
-    summary: S2-045 Remote Code Execution
+    summary:
+      fr: Exécution de code à distance
+      en: Remote code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/struts2/s2-045

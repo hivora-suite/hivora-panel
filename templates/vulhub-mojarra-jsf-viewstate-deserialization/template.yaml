@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-mojarra-jsf-viewstate-deserialization
-  name: Mojarra JSF ViewState Deserialization
-  version: 1.0.0
+  name: Mojarra JSF
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - mojarra-jsf
-  description: Mojarra JSF — Mojarra JSF ViewState Deserialization (vulhub).
+  description: Mojarra JSF ViewState Deserialization (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/mojarra/jsf-viewstate-deserialization
   maintainer: vulhub
@@ -21,10 +21,10 @@ metadata:
     - linux
     tech:
     - deserialization
-    - mojarra-jsf
     - rce
-    difficulty: medium
-    summary: Mojarra JSF ViewState Deserialization
+    summary:
+      fr: Désérialisation non sûre → exécution de code
+      en: Insecure deserialization → code execution
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/mojarra/jsf-viewstate-deserialization

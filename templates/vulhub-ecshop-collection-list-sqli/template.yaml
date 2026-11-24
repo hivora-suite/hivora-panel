@@ -2,13 +2,13 @@ apiVersion: hivora/v1
 kind: Template
 metadata:
   slug: vulhub-ecshop-collection-list-sqli
-  name: ECShop 4.x collection_list SQL Injection
-  version: 1.0.0
+  name: ECShop
+  version: 1.1.0
   category: security-lab
   tags:
   - vulhub
   - ecshop
-  description: ECshop — ECShop 4.x collection_list SQL Injection (vulhub).
+  description: ECShop 4.x collection_list SQL Injection (vulhub).
   links:
     site: https://github.com/vulhub/vulhub/tree/master/ecshop/collection_list-sqli
   maintainer: vulhub
@@ -21,10 +21,10 @@ metadata:
     - linux
     tech:
     - cms
-    - ecshop
     - sql-injection
-    difficulty: medium
-    summary: ECShop 4.x collection_list SQL Injection
+    summary:
+      fr: Injection SQL
+      en: SQL injection
     solution:
       fr: |
         Adresse : IP:port affichés par le panel (les ports du guide sont ceux d'origine de vulhub), ou l'IP du lab sur le port d'origine via le VPN labo. Guide d'origine (anglais) : https://github.com/vulhub/vulhub/tree/master/ecshop/collection_list-sqli
