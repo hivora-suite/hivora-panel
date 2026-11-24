@@ -64,6 +64,16 @@ def slugify(text: str) -> str:
     return slug[:50].strip("-") or "app"
 
 
+async def free_slug(session: AsyncSession, base: str) -> str:
+    """``base``, or ``base-2``, ``base-3``… the first one no app uses yet."""
+    taken = set(await session.scalars(
+        select(Application.slug).where(Application.slug.like(f"{base}%"))
+    ))  # fmt: skip
+    if base not in taken:
+        return base
+    return next(f"{base}-{n}" for n in range(2, 10_000) if f"{base}-{n}" not in taken)
+
+
 def secret_context(app_id: int, key: str) -> str:
     return f"app:{app_id}:{key}"
 

@@ -184,6 +184,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/apps/compose": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deploy New Compose
+         * @description Deploy your own compose file as a new app.
+         */
+        post: operations["deploy_new_compose_api_v1_apps_compose_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apps/compose/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Plan New Compose
+         * @description Preview a new app from your own compose file (admin: it runs as written). Nothing is
+         *     written.
+         */
+        post: operations["plan_new_compose_api_v1_apps_compose_plan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/apps/custom": {
         parameters: {
             query?: never;
@@ -2183,6 +2224,10 @@ export interface paths {
          * Disable
          * @description Remove the labs VPN (students' configs die with it). The labs publish their ports on the
          *     host again. Refused while a target that must be scanned (``needs_vpn``) is deployed.
+         *
+         *     One job on the VPN app (its removal), awaited so the labs are re-planned only once it is
+         *     gone (``vpn_zones`` then empty → no more ``vpn_only``). No revision update beforehand: two
+         *     jobs on the same app would race (a removed app leaves the other job without an app).
          */
         post: operations["disable_api_v1_labs_vpn_disable_post"];
         delete?: never;
@@ -4422,6 +4467,31 @@ export interface components {
          * @enum {string}
          */
         NetworkMode: "none" | "shared" | "isolated" | "custom";
+        /** NewComposeIn */
+        NewComposeIn: {
+            /** Compose Yaml */
+            compose_yaml: string;
+            /**
+             * Labs
+             * @default false
+             */
+            labs: boolean;
+            /** Name */
+            name: string;
+            /** Zone */
+            zone?: string | null;
+        };
+        /** NewComposePlanOut */
+        NewComposePlanOut: {
+            /** Compose Yaml */
+            compose_yaml: string;
+            /** Conflicts */
+            conflicts: components["schemas"]["ConflictOut"][];
+            /** Problems */
+            problems: string[];
+            /** Slug */
+            slug: string;
+        };
         /** OptionOut */
         OptionOut: {
             /** Label */
@@ -6249,6 +6319,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CapacityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deploy_new_compose_api_v1_apps_compose_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewComposeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeployOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    plan_new_compose_api_v1_apps_compose_plan_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewComposeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NewComposePlanOut"];
                 };
             };
             /** @description Validation Error */

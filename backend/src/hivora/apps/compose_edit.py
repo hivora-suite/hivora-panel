@@ -2,23 +2,29 @@
 
 import difflib
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+import yaml
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from hivora.apps.compose_check import problems as compose_problems
 from hivora.apps.core import (
+    LabsDisabledError,
     PortConflictError,
     conflict_dict,
     decrypt_secrets,
+    free_slug,
     get_app,
     latest_revision,
     queue_revision,
+    slugify,
 )
 from hivora.apps.models import (
     Application,
     AppRevision,
+    DesiredState,
     Exposure,
+    Origin,
     PortBinding,
     RevisionStatus,
     Service,
@@ -30,13 +36,17 @@ from hivora.apps.ports import PortConflict, find_conflicts, used_ports
 from hivora.compose_runner import ComposeError, ComposeRunner
 from hivora.core.clock import Clock
 from hivora.core.config import Settings
-from hivora.core.errors import ValidationError
+from hivora.core.errors import ConflictError, ValidationError
 from hivora.core.events import EventBus
 from hivora.crypto.cipher import SecretBox
-from hivora.jobs import Job, JobQueue
+from hivora.jobs import Job, JobKind, JobQueue
 from hivora.state import StateStore
 from hivora.templates.compiler import PortPlan
 from hivora.templates.expressions import secret_env_name
+from hivora.zones import LABS_ZONE, Zone, ensure_labs_zone, get_zone, zone_network
+
+if TYPE_CHECKING:
+    from hivora.addressing import Addressing
 
 
 class ComposeRejectedError(ValidationError):
@@ -53,6 +63,19 @@ class ComposePlan:
     services: list[Service]  # declared services, read from the resolved model
 
 
+@dataclass(frozen=True, slots=True)
+class NewComposePlan:
+    """A new app from the user's own compose file, as Hivora will write it."""
+
+    slug: str
+    name: str
+    zone: Zone | None
+    compose_yaml: str  # with the project name, Hivora's labels and the fixed networks added
+    problems: list[str]
+    conflicts: list[PortConflict]
+    services: list[Service]
+
+
 class ComposeEdit:
     def __init__(
         self, *, settings: Settings, sessions: async_sessionmaker[AsyncSession],
@@ -67,26 +90,36 @@ class ComposeEdit:
         self.box = box
         self.bus = bus
         self.clock = clock
+        self.addressing: Addressing | None = None  # set by the runtime (None: Docker chooses)
+
+    async def _check(
+        self, session: AsyncSession, slug: str, compose_yaml: str, env: dict[str, str]
+    ) -> tuple[list[str], list[PortConflict], list[Service]]:
+        """Resolved by Compose, then the safety checks and the host ports in use."""
+        try:
+            model = await self.runner.check(slug, compose_yaml, env)
+        except ComposeError as exc:
+            return [f"compose: {exc}"[:500]], [], []
+        roots = [self.settings.volumes_root / slug, self.runner.project_dir(slug),
+                 self.runner.apps_dir / f".check-{slug}"]  # fmt: skip
+        found = compose_problems(model, slug, roots)
+        services = [] if found else _services_from_model(model)
+        used = await used_ports(session, self.state, exclude_app=slug)
+        conflicts = find_conflicts((
+            PortPlan(sv.name, p.container_port, p.host_port, p.protocol, "other",
+                     p.exposure.value, p.host_ip)
+            for sv in services for p in sv.ports
+        ), used)  # fmt: skip
+        return found, conflicts, services
 
     async def plan(self, session: AsyncSession, app_id: int, compose_yaml: str) -> ComposePlan:
         """Validate a hand-written compose file: resolved by Compose, then checked."""
         app = await get_app(session, app_id)
         secrets = await decrypt_secrets(session, self.box, app.id)
         env = {secret_env_name(k): v for k, v in secrets.items()}
-        try:
-            model = await self.runner.check(app.slug, compose_yaml, env)
-        except ComposeError as exc:
-            return ComposePlan(app, compose_yaml, "", [f"compose: {exc}"[:500]], [], [])
-        roots = [self.settings.volumes_root / app.slug, self.runner.project_dir(app.slug),
-                 self.runner.apps_dir / f".check-{app.slug}"]  # fmt: skip
-        found = compose_problems(model, app.slug, roots)
-        services = [] if found else _services_from_model(model)
-        used = await used_ports(session, self.state, exclude_app=app.slug)
-        conflicts = find_conflicts((
-            PortPlan(sv.name, p.container_port, p.host_port, p.protocol, "other",
-                     p.exposure.value, p.host_ip)
-            for sv in services for p in sv.ports
-        ), used)  # fmt: skip
+        found, conflicts, services = await self._check(session, app.slug, compose_yaml, env)
+        if found and found[0].startswith("compose: "):
+            return ComposePlan(app, compose_yaml, "", found, [], [])
         latest = await latest_revision(session, app.id)
         diff = "".join(difflib.unified_diff(
             (latest.compose_yaml if latest else "").splitlines(keepends=True),
@@ -94,6 +127,99 @@ class ComposeEdit:
             fromfile="current", tofile="edited",
         ))  # fmt: skip
         return ComposePlan(app, compose_yaml, diff, found, conflicts, services)
+
+    async def plan_new(self, session: AsyncSession, name: str, zone_slug: str | None,
+                       compose_yaml: str, *, labs: bool = False) -> NewComposePlan:  # fmt: skip
+        """A new app from the user's own compose file. Hivora adds the project name, its
+        labels and the networks (fixed addresses of the plan); the file keeps the rest.
+        Called in the caller's session: a preview that is not committed writes nothing."""
+        if labs:
+            if not self.settings.labs:
+                raise LabsDisabledError("the security labs are turned off on this panel")
+            zone: Zone | None = await ensure_labs_zone(session, self.clock)
+        else:
+            zone = await get_zone(session, zone_slug) if zone_slug else None
+            if zone and zone.slug == LABS_ZONE:
+                raise ConflictError("the Labo zone only holds security labs", slug=zone.slug)
+        name = name.strip()
+        slug = await free_slug(session, slugify(name))
+        try:
+            model = yaml.safe_load(compose_yaml)
+        except yaml.YAMLError as exc:
+            return NewComposePlan(slug, name, zone, compose_yaml, [f"yaml: {exc}"[:500]], [], [])
+        services = model.get("services") if isinstance(model, dict) else None
+        if not isinstance(model, dict) or not isinstance(services, dict) or not services:
+            return NewComposePlan(slug, name, zone, compose_yaml, ["no service"], [], [])
+        # Hivora places every container (zone, fixed address): no network of the file's own.
+        own_nets = [f"service {n}: networks are set by Hivora, remove them" for n, s in
+                    services.items() if isinstance(s, dict) and s.get("networks")]  # fmt: skip
+        if model.get("networks") or own_nets:
+            problems = own_nets or ["networks are set by Hivora, remove them"]
+            return NewComposePlan(slug, name, zone, compose_yaml, problems, [], [])
+        text = await self._with_hivora(session, model, slug, zone)
+        found, conflicts, declared = await self._check(session, slug, text, {})
+        return NewComposePlan(slug, name, zone, text, found, conflicts, declared)
+
+    async def _with_hivora(self, session: AsyncSession, model: dict[str, Any], slug: str,
+                           zone: Zone | None) -> str:  # fmt: skip
+        """The file with what Hivora relies on: project name, labels, fixed networks."""
+        services: dict[str, Any] = model["services"]
+        fixed = (await self.addressing.for_app(session, slug, zone, list(services), [])
+                 if self.addressing else None)  # fmt: skip
+        own = zone_network(zone)
+        for name, svc in services.items():
+            svc = services[name] = svc if isinstance(svc, dict) else {}
+            labels = svc.get("labels") or {}
+            if isinstance(labels, list):
+                labels = dict(str(x).partition("=")[::2] for x in labels)
+            svc["labels"] = {**labels, "io.hivora.app": slug, "io.hivora.revision": "1",
+                             **({"io.hivora.zone": zone.slug} if zone else {})}  # fmt: skip
+            nets: dict[str, dict[str, str]] = {"default": {}, **({own: {}} if own else {})}
+            for net, service, ip in fixed.addresses if fixed else ():
+                if service == name:
+                    nets.setdefault(net, {})["ipv4_address"] = ip
+            svc["networks"] = nets
+        networks: dict[str, Any] = {}
+        if fixed and fixed.default_subnet:
+            networks["default"] = {"ipam": {"config": [{"subnet": fixed.default_subnet}]}}
+        if own:
+            networks[own] = {"name": own, "external": True}
+        body = {"name": slug, **{k: v for k, v in model.items() if k != "name"}}
+        if networks:
+            body["networks"] = networks
+        head = f"# Your compose file, deployed by Hivora as app {slug}.\n"
+        return head + yaml.safe_dump(body, sort_keys=False, allow_unicode=True)
+
+    async def create(self, name: str, zone_slug: str | None, compose_yaml: str, *,
+                     labs: bool = False) -> tuple[Application, Job]:  # fmt: skip
+        """Deploy the user's own compose file as a new app (revision 1, written as checked)."""
+        async with self.sessions() as session, session.begin():
+            plan = await self.plan_new(session, name, zone_slug, compose_yaml, labs=labs)
+            if plan.problems:
+                raise ComposeRejectedError("this compose file cannot be applied",
+                                           problems=plan.problems)  # fmt: skip
+            if plan.conflicts:
+                conflicts = [conflict_dict(c) for c in plan.conflicts]
+                raise PortConflictError("host ports already in use", conflicts=conflicts)
+            now = self.clock.now()
+            app = Application(
+                slug=plan.slug, name=plan.name, zone_id=plan.zone.id if plan.zone else None,
+                origin=Origin.COMPOSE, template_version_id=None,
+                desired_state=DesiredState.RUNNING, icon=None, notes="", created_at=now,
+                services=plan.services,
+            )  # fmt: skip
+            session.add(app)
+            await session.flush()
+            revision = AppRevision(app_id=app.id, number=1, inputs={},
+                                   compose_yaml=plan.compose_yaml, created_at=now,
+                                   status=RevisionStatus.PENDING, custom_compose=True)  # fmt: skip
+            session.add(revision)
+            await session.flush()
+            job = self.jobs.add(session, JobKind.DEPLOY, app_id=app.id, app_slug=app.slug,
+                                params={"revision_id": revision.id})  # fmt: skip
+        self.jobs.wake()
+        self.bus.publish("app.created", app=app.slug, template=None, job=job.id)
+        return app, job
 
     async def apply(self, app_id: int, compose_yaml: str, *,
                     event: str = "app.compose_edited") -> Job:  # fmt: skip

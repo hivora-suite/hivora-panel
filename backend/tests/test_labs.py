@@ -109,6 +109,27 @@ def test_labs_on_deploys_into_its_own_zone_and_stays_out_of_topology(tmp_path: P
         assert all(n.get("slug") != "security-labs" for n in graph["nodes"])
 
 
+def test_own_compose_target_lands_in_the_labo_zone(tmp_path: Path) -> None:
+    with TestClient(create_app(runtime=_runtime(tmp_path, labs=True))) as client:
+        admin(client)
+        body = {
+            "name": "Ma cible",
+            "labs": True,
+            "zone": "ignored",
+            "compose_yaml": "services:\n  vuln:\n    image: vulnerables/web-dvwa\n",
+        }
+        out = client.post(f"{API}/apps/compose", json=body).json()
+        assert wait_job(client, out["job"]["id"])["status"] == "succeeded"
+        zones = {z["slug"]: z["id"] for z in client.get(f"{API}/zones").json()}
+        assert out["app"]["zone_id"] == zones["security-labs"]
+        text = client.get(f"{API}/apps/{out['app']['id']}/compose").json()["compose_yaml"]
+        assert "io.hivora.zone: security-labs" in text
+        # A normal app's compose may not pick the Labo zone.
+        bad = client.post(f"{API}/apps/compose/plan", json={**body, "labs": False,
+                                                            "zone": "security-labs"})  # fmt: skip
+        assert bad.status_code == 409
+
+
 # --- Lot 3: batch deploy (up to 25), each independent ---------------------------------------
 
 

@@ -16,6 +16,7 @@ from hivora.apps.core import (
     PortConflictError,
     UnsupportedArchitectureError,
     conflict_dict,
+    free_slug,
     get_app,
     slugify,
     store_secrets,
@@ -69,7 +70,7 @@ class Deployer:
         if not entry.supports(self.catalog.host_arch()):
             raise UnsupportedArchitectureError(entry.slug, arch=self.catalog.host_arch())
         name = req.name.strip() or entry.template.metadata.name
-        slug = req.slug or await self._free_slug(session, slugify(name))
+        slug = req.slug or await free_slug(session, slugify(name))
         if req.slug and await session.scalar(
             select(Application.id).where(Application.slug == slug)
         ):
@@ -135,15 +136,6 @@ class Deployer:
         self.jobs.wake()
         self.bus.publish("app.created", app=app.slug, template=plan.entry.slug, job=job.id)
         return app, job
-
-    async def _free_slug(self, session: AsyncSession, base: str) -> str:
-        taken = set(await session.scalars(
-            select(Application.slug).where(Application.slug.like(f"{base}%"))
-        ))  # fmt: skip
-        if base not in taken:
-            return base
-        return next(f"{base}-{n}" for n in range(2, 10_000) if f"{base}-{n}" not in taken)
-
 
 class Lifecycle:
     """Start, stop, restart and removal of a deployed (or adopted) app."""

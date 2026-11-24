@@ -131,3 +131,36 @@ def test_shown_address_follows_the_port_a_hand_written_compose_publishes(client:
     detail = client.get(f"{API}/apps/{app_id}").json()
     assert detail["access"]["web"] == "http://192.168.1.10:8080"
     assert [(p["host_port"], p["container_port"]) for p in detail["ports"]] == [(8080, 8080)]
+
+
+def test_new_app_from_your_own_compose(client: Any) -> None:
+    admin(client)
+    mine = "services:\n  web:\n    image: nginx:alpine\n    ports: ['8091:80']\n"
+    body = {"name": "Mon Site", "compose_yaml": mine}
+    plan = client.post(f"{API}/apps/compose/plan", json=body).json()
+    assert plan["slug"] == "mon-site" and plan["problems"] == [] and plan["conflicts"] == []
+    written = yaml.safe_load(plan["compose_yaml"])
+    assert written["name"] == "mon-site"
+    assert written["services"]["web"]["labels"]["io.hivora.app"] == "mon-site"
+    assert "ipv4_address" in written["services"]["web"]["networks"]["default"]  # fixed address
+    assert client.get(f"{API}/apps").json() == []  # a preview writes nothing
+
+    own_net = {**body, "compose_yaml": mine + "    networks: [front]\nnetworks: {front: {}}\n"}
+    assert "networks" in client.post(f"{API}/apps/compose/plan", json=own_net).json()["problems"][0]
+    evil = {**body, "compose_yaml": mine + "    privileged: true\n"}
+    refused = client.post(f"{API}/apps/compose", json=evil)
+    assert refused.status_code == 422 and code(refused) == "compose_rejected"
+
+    made = client.post(f"{API}/apps/compose", json=body).json()
+    assert made["app"]["origin"] == "compose" and made["app"]["template"] is None
+    assert wait_job(client, made["job"]["id"])["status"] == "succeeded"
+    app_id = made["app"]["id"]
+    text = client.get(f"{API}/apps/{app_id}/compose").json()["compose_yaml"]
+    assert "io.hivora.app: mon-site" in text
+    # Then an app like any other: its compose can be edited.
+    edited = text.replace("nginx:alpine", "nginx:1-alpine")
+    assert client.post(f"{API}/apps/{app_id}/compose/plan",
+                       json={"compose_yaml": edited}).json()["problems"] == []  # fmt: skip
+    # The labs are off on this panel: no target from a compose file either.
+    lab = client.post(f"{API}/apps/compose", json={**body, "labs": True})
+    assert lab.status_code == 403 and code(lab) == "labs_disabled"

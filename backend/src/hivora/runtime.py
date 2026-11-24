@@ -164,6 +164,7 @@ class Runtime:
         addressing = Addressing(sessions=sessions, gateway=gateway)
         apps.planner.addressing = addressing
         apps.addressing = addressing
+        apps.compose.addressing = addressing
         # What only the planner and the job handlers use, given to them here.
         apps.planner.secret_settings = secrets
         apps.planner.public_address = public_address.current

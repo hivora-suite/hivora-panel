@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, Ban, Boxes, BrickWall, Bug, ChevronDown, Container, Crosshair, FileCode, Globe, KeyRound, LayoutDashboard, LayoutGrid, LogOut, Menu, Network, Route, Search, Server, Settings, Share2, ShieldBan, ShieldCheck, Users, Waypoints } from "lucide-react";
+import { Activity, Ban, Boxes, BrickWall, Bug, ChevronDown, Container, Crosshair, FileCode, FileStack, Globe, KeyRound, LayoutDashboard, LayoutGrid, LogOut, Menu, Network, Route, Search, Server, Settings, Share2, ShieldBan, ShieldCheck, Users, Waypoints } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -73,6 +73,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/catalog/", label: "nav.catalog", icon: Boxes, role: "viewer", also: ["/deploy/"] },
       { href: "/custom/", label: "custom.title", icon: Container, role: "operator" },
+      { href: "/compose/", label: "nav.ownCompose", icon: FileStack, role: "admin" },
       { href: "/python/", label: "py.title", icon: FileCode, role: "operator" },
       { href: "/sites/", label: "nav.sites", icon: Globe, role: "viewer", also: ["/app/site/", "/site/"] },
     ],
@@ -98,6 +99,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/labs/dashboard/", label: "nav.labs.dashboard", icon: Bug, role: "viewer" },
       { href: "/labs/students/", label: "nav.labs.students", icon: Users, role: "viewer" },
       { href: "/labs/vpn/", label: "nav.labs.vpn", icon: KeyRound, role: "viewer" },
+      { href: "/labs/compose/", label: "nav.labs.compose", icon: FileStack, role: "admin" },
     ],
   },
   {

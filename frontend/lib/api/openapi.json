@@ -3782,6 +3782,78 @@
         "title": "NetworkMode",
         "type": "string"
       },
+      "NewComposeIn": {
+        "properties": {
+          "compose_yaml": {
+            "maxLength": 200000,
+            "minLength": 1,
+            "title": "Compose Yaml",
+            "type": "string"
+          },
+          "labs": {
+            "default": false,
+            "title": "Labs",
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone"
+          }
+        },
+        "required": [
+          "compose_yaml",
+          "name"
+        ],
+        "title": "NewComposeIn",
+        "type": "object"
+      },
+      "NewComposePlanOut": {
+        "properties": {
+          "compose_yaml": {
+            "title": "Compose Yaml",
+            "type": "string"
+          },
+          "conflicts": {
+            "items": {
+              "$ref": "#/components/schemas/ConflictOut"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "problems": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Problems",
+            "type": "array"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "compose_yaml",
+          "problems",
+          "conflicts"
+        ],
+        "title": "NewComposePlanOut",
+        "type": "object"
+      },
       "OptionOut": {
         "properties": {
           "label": {
@@ -8643,6 +8715,90 @@
           }
         },
         "summary": "Capacity",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/api/v1/apps/compose": {
+      "post": {
+        "description": "Deploy your own compose file as a new app.",
+        "operationId": "deploy_new_compose_api_v1_apps_compose_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewComposeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeployOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Deploy New Compose",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/api/v1/apps/compose/plan": {
+      "post": {
+        "description": "Preview a new app from your own compose file (admin: it runs as written). Nothing is\nwritten.",
+        "operationId": "plan_new_compose_api_v1_apps_compose_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewComposeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewComposePlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Plan New Compose",
         "tags": [
           "apps"
         ]
@@ -14427,7 +14583,7 @@
     },
     "/api/v1/labs/vpn/disable": {
       "post": {
-        "description": "Remove the labs VPN (students' configs die with it). The labs publish their ports on the\nhost again. Refused while a target that must be scanned (``needs_vpn``) is deployed.",
+        "description": "Remove the labs VPN (students' configs die with it). The labs publish their ports on the\nhost again. Refused while a target that must be scanned (``needs_vpn``) is deployed.\n\nOne job on the VPN app (its removal), awaited so the labs are re-planned only once it is\ngone (``vpn_zones`` then empty \u2192 no more ``vpn_only``). No revision update beforehand: two\njobs on the same app would race (a removed app leaves the other job without an app).",
         "operationId": "disable_api_v1_labs_vpn_disable_post",
         "responses": {
           "202": {
